@@ -1,0 +1,14 @@
+import fs from 'node:fs';
+import { compile, root } from './compile.mjs';
+const artifact = compile().ScopePay;
+const html = fs.readFileSync(`${root}/dist/index.html`, 'utf8');
+const js = fs.readFileSync(`${root}/dist/app.js`, 'utf8');
+if (!html.includes('<title>ScopePay</title>') || !html.includes('rel="icon"')) throw new Error('Missing product metadata or favicon');
+if (!js.includes('registerTool') || !js.includes('deployContract') || !js.includes('createDeal')) throw new Error('Missing wallet product interactions or WebMCP registration');
+if (!js.includes('startLiveSync') || !js.includes('handleAccountsChanged') || js.includes('location.reload()')) throw new Error('Live wallet synchronization is missing or still forces page reloads');
+if (!html.includes('flowSummary') || !js.includes('moneyFlow') || !js.includes('clientAmount')) throw new Error('Settlement accounting is missing from the deal view');
+if (!html.includes('productPromise') || !html.includes('copyProofLink')) throw new Error('Judge explanation or proof sharing controls are missing');
+if (!html.includes('shareDialog') || !js.includes('copyText') || !js.includes('showShareLink')) throw new Error('Share-link fallback is missing');
+if (!js.includes('proofContext') || !js.includes('encodeProof') || !js.includes('Evidence verified')) throw new Error('Portable proof verification is missing');
+new Function(js);
+console.log(`Checks passed: ${artifact.contractName}, judge path, portable proof controls, product interactions, and JavaScript syntax.`);
