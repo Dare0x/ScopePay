@@ -10,5 +10,6 @@ if (!html.includes('flowSummary') || !js.includes('moneyFlow') || !js.includes('
 if (!html.includes('productPromise') || !html.includes('copyProofLink')) throw new Error('Judge explanation or proof sharing controls are missing');
 if (!html.includes('shareDialog') || !js.includes('copyText') || !js.includes('showShareLink')) throw new Error('Share-link fallback is missing');
 if (!js.includes('proofContext') || !js.includes('encodeProof') || !js.includes('Evidence verified')) throw new Error('Portable proof verification is missing');
+if (!html.includes('passportPanel') || !js.includes('loadWorkerRecord') || !js.includes('read_scopepay_worker_record')) throw new Error('Portable worker record or agent reader is missing');
 new Function(js);
-console.log(`Checks passed: ${artifact.contractName}, judge path, portable proof controls, product interactions, and JavaScript syntax.`);
+console.log(`Checks passed: ${artifact.contractName}, judge path, portable work proof, product interactions, and JavaScript syntax.`);
