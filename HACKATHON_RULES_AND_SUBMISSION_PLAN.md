@@ -1,6 +1,14 @@
 # ScopePay: Arbitrum Open House Singapore readiness audit
 
-Audit date: 14 September 2026
+Audit date: 21 September 2026
+
+## Current event snapshot
+
+- The event is live and the public page shows **864+ participants**.
+- Registration closes **2 October 2026 at 17:01** on HackQuest.
+- Submission closes **4 October 2026 at 15:59** on HackQuest.
+- The public judging page now states that projects integrating **Paxos USDG** receive extra consideration.
+- ScopePay's live interface is publicly accessible without an owner login.
 
 ## Decision
 
@@ -70,9 +78,9 @@ The entrant completed Buildathon registration and created the ScopePay project d
 
 | Priority | Gap | Why judges care | Required fix |
 |---|---|---|---|
-| P0 | The live Site is still owner-only | Judges need a link that opens without the owner's account | Change the Site audience to public before submission |
+| Done | The live Site was owner-only | Judges need a link that opens without the owner's account | Site access changed to public on 21 September 2026 |
 | P1 | Contract source is not matched on Sourcify | Reviewers cannot easily inspect deployed source | Publish the repository and verify the exact deployment on a public source-verification service/explorer |
-| P1 | Security coverage is narrow | Smart-contract quality is an explicit criterion | Add lifecycle, authorization, invariant, reentrancy/token-edge, timeout, and failure-path tests; document known limitations |
+| P1 | Security coverage needs adversarial token and timeout testing | Smart-contract quality is an explicit criterion | Six lifecycle, authorization, settlement, cancellation, isolation, and fund-conservation tests now pass; add adversarial-token and v2 timeout tests |
 | P1 | Liveness depends on the named arbiter | Funds can remain stuck if the arbiter disappears | Add explicit deadlines and a safe timeout/refund path in a v2 contract |
 | P2 | Product-market evidence is missing | Product-market fit and real problem solving are explicit criteria | Interview at least five freelancers/clients and record the strongest findings and design changes |
 | P2 | Final submission material is incomplete | Judges need reproducible proof | Add the architecture diagram, screenshots, buildathon change log, and final short demo to the existing public README and links |

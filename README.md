@@ -43,7 +43,7 @@ The contract uses Circle's official Arbitrum Sepolia test USDC address. Test tok
 
 ## Arbitrum submission work remaining
 
-- Broaden the contract security tests, add a timeout path, and verify the deployed source publicly.
+- Add adversarial-token coverage and a timeout path, then verify the deployed source publicly. The current six-test security suite and threat model are documented in [SECURITY.md](./SECURITY.md).
 - Validate the product language with freelancers and clients.
 - Publish the demo and repository for public access, complete the HackQuest project profile, and prepare the final submission package and video.
 
