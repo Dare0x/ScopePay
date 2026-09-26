@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <script src="gsap-lite.js"></script>
+    <style>
+      :root { --ink:#080b0a; --paper:#f1f3ef; --lime:#b7ff2a; --muted:#9aa59e; --line:rgba(241,243,239,.18); }
+      * { box-sizing:border-box; }
+      html,body { margin:0; width:1920px; height:1080px; overflow:hidden; background:var(--ink); }
+      body { color:var(--paper); font-family:sans-serif; }
+      #root { width:100%; height:100%; position:relative; overflow:hidden; background:var(--ink); }
+      .scene { position:absolute; inset:0; overflow:hidden; }
+      .grid { position:absolute; inset:0; opacity:.5; background-image:linear-gradient(rgba(241,243,239,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(241,243,239,.06) 1px,transparent 1px); background-size:48px 48px; }
+      .topbar { position:absolute; inset:38px 72px auto; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--line); padding-bottom:24px; }
+      .brand { display:flex; align-items:center; gap:18px; font-size:24px; font-weight:800; letter-spacing:-.04em; }
+      .mark { width:36px; height:36px; display:grid; place-items:center; border:1px solid var(--lime); color:var(--lime); font-size:15px; font-weight:800; }
+      .eyebrow { color:var(--lime); font:700 16px monospace; letter-spacing:.18em; text-transform:uppercase; }
+      .headline { position:absolute; left:118px; top:244px; max-width:720px; font-size:112px; line-height:.88; font-weight:900; letter-spacing:-.075em; }
+      .headline .accent { color:var(--lime); }
+      .dek { position:absolute; left:124px; top:522px; max-width:520px; color:#bec8c1; font-size:27px; line-height:1.3; }
+      .rule { position:absolute; left:124px; top:720px; width:520px; border-top:2px solid var(--lime); }
+      .caption { position:absolute; left:124px; bottom:104px; color:var(--muted); font:700 18px monospace; letter-spacing:.08em; text-transform:uppercase; }
+      .screen-window { position:absolute; left:780px; top:150px; width:1000px; height:780px; overflow:hidden; border:1px solid rgba(241,243,239,.26); background:#0b0d0c; box-shadow:0 24px 100px rgba(0,0,0,.45); }
+      .screen-image { position:absolute; left:0; top:0; width:1000px; height:auto; display:block; }
+      .screen-shade { position:absolute; inset:0; background:linear-gradient(90deg,rgba(8,11,10,.04),rgba(8,11,10,.28)); pointer-events:none; }
+      .label { position:absolute; padding:12px 16px; background:var(--lime); color:var(--ink); font:800 16px monospace; letter-spacing:.06em; text-transform:uppercase; }
+      .panel { position:absolute; background:#ffffff; color:#000000; border:1px solid rgba(8,11,10,.28); }
+      .panel-title { color:#000000; font-size:28px; font-weight:800; letter-spacing:-.04em; }
+      .panel-copy { color:#000000; font-size:20px; line-height:1.35; }
+      .stack { position:absolute; right:132px; top:230px; width:660px; display:grid; gap:16px; }
+      .stack .panel { position:relative; padding:28px 32px; display:grid; grid-template-columns:110px 1fr; gap:24px; align-items:center; }
+      .stack .num { color:#000000; font:700 16px monospace; letter-spacing:.1em; }
+      .stack .panel-title { font-size:26px; }
+      .proof-cards { position:absolute; left:780px; right:124px; top:294px; display:grid; grid-template-columns:repeat(3,1fr); gap:22px; }
+      .proof-card { min-height:280px; padding:28px; border:1px solid var(--line); background:rgba(8,11,10,.72); }
+      .proof-card .card-kicker { color:var(--lime); font:700 15px monospace; letter-spacing:.1em; }
+      .proof-card h3 { margin:34px 0 22px; font-size:34px; letter-spacing:-.05em; }
+      .proof-card p { color:#acb8af; font-size:18px; line-height:1.35; }
+      .receipt { position:absolute; left:124px; right:124px; top:210px; display:grid; grid-template-columns:1fr 1fr; gap:70px; align-items:center; }
+      .receipt h2 { margin:18px 0 24px; font-size:76px; line-height:.95; letter-spacing:-.07em; }
+      .receipt p { max-width:580px; color:#b9c4bc; font-size:24px; line-height:1.35; }
+      .receipt-link { margin-top:34px; display:inline-block; color:var(--lime); font:700 19px monospace; border-bottom:1px solid var(--lime); padding-bottom:9px; }
+      .tx { padding:28px 30px; background:#ffffff; color:#000000; border-left:10px solid var(--lime); }
+      .tx-row { display:flex; justify-content:space-between; gap:20px; padding:19px 0; border-bottom:1px solid rgba(8,11,10,.16); color:#000000; font:700 17px monospace; }
+      .tx-row:last-child { border-bottom:0; }
+      .tx-row span:last-child { color:#000000; text-align:right; font-weight:400; }
+      .close { position:absolute; inset:0; display:grid; place-items:center; text-align:center; }
+      .close-title { max-width:1100px; font-size:126px; line-height:.88; font-weight:900; letter-spacing:-.075em; }
+      .close .sub { margin-top:40px; color:#b5c0b8; font:700 20px monospace; letter-spacing:.09em; text-transform:uppercase; }
+      .close .url { margin-top:68px; color:var(--lime); font:700 22px monospace; }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="90" data-width="1920" data-height="1080">
+      <section id="scene-01" class="scene clip" data-start="0" data-duration="8" data-track-index="0">
+        <div class="grid"></div>
+        <div class="topbar"><div class="brand"><span class="mark">SP</span><span>ScopePay</span></div><span class="eyebrow">Arbitrum Sepolia · Live</span></div>
+        <div class="eyebrow scene-copy" style="position:absolute;left:124px;top:160px;">Internet work escrow · 2026</div>
+        <div class="headline scene-copy">Work,<br><span class="accent">settled.</span></div>
+        <div class="dek scene-copy">Milestone escrow for independent work, with the receipt attached.</div>
+        <div class="rule scene-copy"></div>
+        <div class="caption scene-copy">Fund → Submit → Approve → Settle</div>
+      </section>
+      <section id="scene-02" class="scene clip" data-start="8" data-duration="14" data-track-index="0">
+        <div class="grid"></div>
+        <div class="topbar"><div class="brand"><span class="mark">SP</span><span>ScopePay</span></div><span class="eyebrow">01 / Scope secured</span></div>
+        <div class="headline scene-copy" style="top:170px;font-size:76px;max-width:560px;">Fund the<br><span class="accent">exact scope.</span></div>
+        <div class="dek scene-copy" style="top:412px;max-width:460px;">The client locks the milestone total before work begins. The contract holds the terms.</div>
+        <div class="screen-window scene-copy"><img class="screen-image" data-layout-allow-overflow="true" src="assets/scopepay-live-full-page.png" alt="ScopePay live product" /><div class="screen-shade"></div><div class="label" style="left:34px;top:34px;">Funded deal · 4 USDC</div></div>
+        <div class="caption scene-copy">A funded scope makes the promise concrete.</div>
+      </section>
+      <section id="scene-03" class="scene clip" data-start="22" data-duration="20" data-track-index="0">
+        <div class="grid"></div>
+        <div class="topbar"><div class="brand"><span class="mark">SP</span><span>ScopePay</span></div><span class="eyebrow">02 / Evidence committed</span></div>
+        <div class="eyebrow scene-copy" style="position:absolute;left:124px;top:166px;">The normal payment path</div>
+        <div class="headline scene-copy" style="top:218px;font-size:76px;max-width:660px;">Evidence<br><span class="accent">before release.</span></div>
+        <div class="dek scene-copy" style="top:470px;max-width:470px;">The worker submits a commitment. Approval changes the balance and leaves an activity record.</div>
+        <div class="stack scene-copy">
+          <div class="panel"><div class="num">01 / FUNDS</div><div><div class="panel-title">Scope secured</div><div class="panel-copy">USDC is locked before work begins.</div></div></div>
+          <div class="panel"><div class="num">02 / DELIVERY</div><div><div class="panel-title">Evidence committed</div><div class="panel-copy">Each milestone leaves a verifiable trace.</div></div></div>
+          <div class="panel"><div class="num">03 / RECEIPT</div><div><div class="panel-title">Proof retained</div><div class="panel-copy">Settlement becomes portable work history.</div></div></div>
+        </div>
+        <div class="caption scene-copy">Payment follows approved evidence.</div>
+      </section>
+      <section id="scene-04" class="scene clip" data-start="42" data-duration="23" data-track-index="0">
+        <div class="grid"></div>
+        <div class="topbar"><div class="brand"><span class="mark">SP</span><span>ScopePay</span></div><span class="eyebrow">03 / Dispute path</span></div>
+        <div class="headline scene-copy" style="top:170px;font-size:76px;max-width:620px;">When work<br><span class="accent">disagrees.</span></div>
+        <div class="dek scene-copy" style="top:430px;max-width:500px;">The escrow freezes. A named arbiter resolves the current milestone and the contract records the split.</div>
+        <div class="proof-cards scene-copy">
+          <div class="proof-card"><div class="card-kicker">01 / FREEZE</div><h3>Dispute opened</h3><p>Funds stop moving while the evidence is reviewed.</p></div>
+          <div class="proof-card"><div class="card-kicker">02 / ARBITER</div><h3>Split decided</h3><p>The current milestone is resolved by the named arbiter.</p></div>
+          <div class="proof-card"><div class="card-kicker">03 / SETTLE</div><h3>Receipt retained</h3><p>Every state change remains independently checkable.</p></div>
+        </div>
+        <div class="caption scene-copy">Dispute frozen → Arbiter split → Receipt retained</div>
+      </section>
+      <section id="scene-05" class="scene clip" data-start="65" data-duration="15" data-track-index="0">
+        <div class="grid"></div>
+        <div class="topbar"><div class="brand"><span class="mark">SP</span><span>ScopePay</span></div><span class="eyebrow">04 / Public receipt</span></div>
+        <div class="receipt scene-copy">
+          <div><div class="eyebrow">Arbitrum Sepolia proof</div><h2>Trust the<br><span class="accent">receipt.</span></h2><p>The contract, deal, and settlement can be checked independently on the explorer.</p><span class="receipt-link">Open contract ↗</span></div>
+          <div class="tx"><div class="tx-row"><span>Contract</span><span>0xcD7C…51af</span></div><div class="tx-row"><span>Deal funded</span><span>4 USDC · confirmed</span></div><div class="tx-row"><span>Milestone paid</span><span>1 USDC · confirmed</span></div><div class="tx-row"><span>Dispute resolved</span><span>settled · confirmed</span></div></div>
+        </div>
+        <div class="caption scene-copy">Publicly verifiable on Arbitrum Sepolia.</div>
+      </section>
+      <section id="scene-06" class="scene clip" data-start="80" data-duration="10" data-track-index="0">
+        <div class="grid"></div>
+        <div class="close scene-copy" data-layout-ignore="true"><div><div class="brand" style="justify-content:center;margin-bottom:40px;"><span class="mark">SP</span><span>ScopePay</span></div><div class="close-title">Work delivered.<br><span class="accent">Payment earned.</span></div><div class="sub">Milestone escrow with proof attached.</div><div class="url">scopepay-escrow.daretapioca.chatgpt.site</div></div></div>
+      </section>
+    </div>
+    <script>
+      const tl = gsap.timeline({ paused: true });
+      const scenes = [
+        { id:"scene-01", start:0, end:8 },
+        { id:"scene-02", start:8, end:22 },
+        { id:"scene-03", start:22, end:42 },
+        { id:"scene-04", start:42, end:65 },
+        { id:"scene-05", start:65, end:80 },
+        { id:"scene-06", start:80, end:90 }
+      ];
+      scenes.forEach((scene, index) => {
+        const copy = "#" + scene.id + " .scene-copy";
+        const entrance = index === 0 ? 0 : scene.start;
+        tl.fromTo("#" + scene.id, { opacity:0 }, { opacity:1, duration:.45, ease:"power2.out" }, entrance);
+        tl.fromTo(copy, { opacity:0, y:24 }, { opacity:1, y:0, duration:.55, stagger:.07, ease:"power3.out" }, entrance + .18);
+        if (index > 0) tl.to("#" + scenes[index - 1].id, { opacity:0, duration:.35, ease:"power2.in" }, scene.start - .35);
+      });
+      tl.fromTo("#scene-02 .screen-image", { x:-12, y:-20 }, { x:-190, y:-88, duration:12, ease:"none" }, 8.3);
+      tl.fromTo("#scene-05 .tx", { x:60 }, { x:0, duration:.8, ease:"power3.out" }, 65.5);
+      tl.fromTo("#scene-06 .close", { scale:.97 }, { scale:1, duration:1.5, ease:"power2.out" }, 80);
+      window.__timelines["main"] = tl;
+      tl.seek(0);
+    </script>
+  </body>
+</html>
+
