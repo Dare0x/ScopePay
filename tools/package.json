@@ -1,0 +1,10 @@
+{
+  "name": "scopepay-tools",
+  "private": true,
+  "type": "module",
+  "description": "Local QA, demo-wallet and recording scripts for ScopePay. Not part of the deployed app.",
+  "dependencies": {
+    "ethers": "^6.15.0",
+    "puppeteer-core": "^24.43.1"
+  }
+}

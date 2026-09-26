@@ -1,17 +1,29 @@
+// Static checks on the built app: required files, wiring between HTML and JS, and syntax.
 import fs from 'node:fs';
-import { compile, root } from './compile.mjs';
-const artifact = compile().ScopePay;
-const html = fs.readFileSync(`${root}/dist/index.html`, 'utf8');
-const js = fs.readFileSync(`${root}/dist/app.js`, 'utf8');
-const terminalCss = fs.readFileSync(`${root}/dist/terminal.css`, 'utf8');
-if (!html.includes('<title>ScopePay') || !html.includes('rel="icon"')) throw new Error('Missing product metadata or favicon');
-if (!html.includes('/terminal.css') || !terminalCss.includes('.judge-brief') || !terminalCss.includes('.passport-panel')) throw new Error('Proof Terminal visual system is missing');
-if (!js.includes('registerTool') || !js.includes('deployContract') || !js.includes('createDeal')) throw new Error('Missing wallet product interactions or WebMCP registration');
-if (!js.includes('startLiveSync') || !js.includes('handleAccountsChanged') || js.includes('location.reload()')) throw new Error('Live wallet synchronization is missing or still forces page reloads');
-if (!html.includes('flowSummary') || !js.includes('moneyFlow') || !js.includes('clientAmount')) throw new Error('Settlement accounting is missing from the deal view');
-if (!html.includes('productPromise') || !html.includes('copyProofLink')) throw new Error('Judge explanation or proof sharing controls are missing');
-if (!html.includes('shareDialog') || !js.includes('copyText') || !js.includes('showShareLink')) throw new Error('Share-link fallback is missing');
-if (!js.includes('proofContext') || !js.includes('encodeProof') || !js.includes('Evidence verified')) throw new Error('Portable proof verification is missing');
-if (!html.includes('passportPanel') || !js.includes('loadWorkerRecord') || !js.includes('read_scopepay_worker_record')) throw new Error('Portable worker record or agent reader is missing');
-new Function(js);
-console.log(`Checks passed: ${artifact.contractName}, judge path, portable work proof, product interactions, and JavaScript syntax.`);
+import path from 'node:path';
+import {root} from './compile.mjs';
+
+const read = name => fs.readFileSync(path.join(root, 'dist', name), 'utf8');
+const html = read('index.html'), js = read('app.js'), css = read('app.css');
+const config = JSON.parse(read('contract.json'));
+const problems = [];
+const need = (ok, message) => { if (!ok) problems.push(message); };
+
+need(html.includes('<title>ScopePay') && html.includes('rel="icon"'), 'page title or icon missing');
+need(fs.existsSync(path.join(root, 'dist', 'mark.svg')), 'mark.svg missing');
+for (const id of [...html.matchAll(/\bid="([^"]+)"/g)].map(m => m[1])) {
+  const used = js.includes(`'#${id}'`) || js.includes(`"#${id}"`) || js.includes(`getElementById('${id}')`) || ['deal', 'deals', 'record', 'introTitle', 'recordTitle', 'termsList', 'newDealForm'].includes(id);
+  need(used, `#${id} is in the HTML but never used by app.js`);
+}
+for (const id of new Set([...js.matchAll(/\$\('#([A-Za-z]+)'\)/g)].map(m => m[1]))) need(html.includes(`id="${id}"`), `app.js uses #${id} but the HTML has no such element`);
+for (const fn of ['claimAfterReviewWindow', 'reclaimAfterMissedDeadline', 'settleAfterArbiterWindow', 'resolveDispute', 'approveMilestone', 'submitMilestone', 'openDispute', 'cancelUnstarted', 'createDeal']) {
+  need(js.includes(fn), `app.js never calls ${fn}`);
+  need(config.abi.some(item => item.name === fn), `ABI has no ${fn}`);
+}
+need(!js.includes('location.reload()'), 'app.js forces page reloads');
+need(config.tokens.map(t => t.symbol).join() === 'USDC,USDG', 'token list should be USDC and USDG');
+need(css.includes('@media (max-width: 720px)'), 'phone layout rules missing');
+try { new Function(js.replace(/^import .*$/gm, '')); } catch (error) { problems.push(`app.js syntax: ${error.message}`); }
+
+if (problems.length) { console.error(problems.map(p => `✖ ${p}`).join('\n')); process.exit(1); }
+console.log(`Checks passed: page wiring, ${config.abi.filter(i => i.type === 'function').length} contract functions, USDC + USDG, phone layout, syntax.`);

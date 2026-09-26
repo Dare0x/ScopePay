@@ -1,20 +1,252 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>ScopePay — Work, settled.</title><meta name="description" content="USDC milestone escrow and portable work proof on Arbitrum."><link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%230b0d0c'/%3E%3Cpath d='M7 7h18v18H7z' fill='none' stroke='%23b8f541' stroke-width='2'/%3E%3Cpath d='M11 13h10v2H11zm0 5h7v2h-7z' fill='%23b8f541'/%3E%3C/svg%3E"><link rel="stylesheet" href="/styles.css"><link rel="stylesheet" href="/live.css"><link rel="stylesheet" href="/terminal.css"></head><body>
-<header class="topbar"><a class="brand" href="#" aria-label="ScopePay home"><span class="mark">SP</span><span>ScopePay</span></a><nav aria-label="Primary navigation"><button class="nav active" id="dealsNav" type="button">01 / Deals</button><button class="nav" id="activityNav" type="button" aria-controls="activityPanel" aria-expanded="false">02 / Activity</button><button class="nav" id="passportNav" type="button" aria-controls="passportPanel" aria-expanded="false">03 / Records</button></nav><div class="actions"><span class="network"><i></i> ARB-SEPOLIA · LIVE</span><button class="wallet" id="walletButton">Connect wallet</button></div></header>
-<div class="livebar" id="livebar"><div><b id="modeLabel">Guided demo</b><span id="modeDetail">Connect a wallet and configure the contract to use live testnet USDC.</span></div><div class="live-actions"><button class="ghost compact" id="setupButton">Set up contract</button><button class="primary compact" id="newDealButton">New funded deal</button><button class="ghost compact" id="loadDealButton">Load deal</button></div></div>
-<main class="shell"><section class="judge-brief" aria-labelledby="productPromise"><div class="judge-copy"><span class="kicker">MILESTONE ESCROW ON ARBITRUM</span><h1 id="productPromise">Work,<br>settled.</h1><p>Fund the agreement, approve delivery, and leave both sides with a permanent record of the work.</p><div class="judge-actions"><a class="primary link-button" href="#dealView">Open live settlement</a><button class="ghost" id="judgePassport" type="button">View worker record</button><button class="ghost" id="judgeActivity" type="button">View contract activity</button></div></div><div class="judge-steps" aria-label="How ScopePay works"><div><b>01 / FUND</b><span>Terms secured</span><small>USDC is locked before work starts.</small></div><div><b>02 / VERIFY</b><span>Delivery recorded</span><small>Evidence is committed to each milestone.</small></div><div><b>03 / SETTLE</b><span>Proof retained</span><small>Payment creates portable work history.</small></div></div></section>
-<section class="passport-panel hidden" id="passportPanel" tabindex="-1" aria-labelledby="passportTitle"><div class="passport-head"><div><span class="kicker">PORTABLE ON-CHAIN WORK RECORD</span><h2 id="passportTitle">ScopePay Work Proof</h2><p id="passportAddress">Choose a worker from a live deal.</p></div><div class="passport-actions"><button class="secondary" id="copyPassportLink" type="button">Copy profile link</button><button class="ghost" id="closePassport" type="button">Close</button></div></div><div class="passport-metrics" aria-label="Verified worker settlement totals"><div><span>Verified earnings</span><strong id="passportEarned">—</strong><small>USDC paid on-chain</small></div><div><span>Paid milestones</span><strong id="passportMilestones">—</strong><small>Released or awarded</small></div><div><span>Client deals</span><strong id="passportDealsCount">—</strong><small>Found on this contract</small></div></div><div class="passport-records" id="passportDeals"><p class="fine">Loading the contract record…</p></div><p class="passport-note">This record proves contract settlement, wallet participation, and payment. It does not claim identity or judge the quality of the work.</p></section>
-<section class="deal-head" id="dealView"><div><div class="crumb" id="dealCrumb">GUIDED DEMO <span>/</span> #SP-2048</div><h2 class="deal-name" id="dealTitle">Mobile storefront redesign</h2><p id="dealDescription">Client and freelancer agree on each release. Funds stay locked until the work is approved.</p></div><div class="head-actions"><a class="explorer hidden" id="contractLink" target="_blank" rel="noreferrer">View contract ↗</a><button class="ghost" id="copyLink">Copy state link</button><button class="secondary" id="copyProofLink">Copy proof link</button></div></section>
-<section class="layout"><div class="main-column"><article class="escrow-card"><div class="escrow-top"><div><span class="kicker">ESCROW BALANCE</span><strong><span id="remaining">5,000</span> <small>USDC</small></strong></div><span class="secure" id="secureBadge"><i></i> Demonstration state</span></div><div class="bar"><span id="progress"></span></div><div class="bar-labels"><span id="flowSummary"><b>1,200 USDC</b> paid</span><span id="funded">6,200 USDC funded</span></div></article><div class="section-title"><h2>Milestones</h2><span id="milestoneCount">1 of 3 paid</span></div><div class="milestones" id="milestones"></div></div>
-<aside><article class="side-card review" id="actionCard"><span class="kicker" id="actionKicker">NEEDS YOUR REVIEW</span><div class="review-icon" id="actionIcon">02</div><h2 id="actionTitle">Interactive prototype</h2><p id="actionText">The freelancer submitted work. Review the evidence before releasing funds.</p><div id="actionControls"></div><p class="fine" id="actionFine">Demo actions are local. Live mode asks your wallet to sign each contract transaction.</p></article>
-<article class="side-card"><div class="side-title"><h2>Deal terms</h2><span id="termsState">Committed</span></div><dl><div><dt>Client</dt><dd id="clientAddress">0x71C4…8A20</dd></div><div><dt>Freelancer</dt><dd id="workerAddress">0xA90E…41F2</dd></div><div><dt>Arbiter</dt><dd id="arbiterAddress">0x5B17…0D92</dd></div><div><dt>Your role</dt><dd id="userRole">Demo client</dd></div></dl><div class="commitment"><span>Terms commitment</span><code id="termsHash">0x3c7f…91e2</code></div><p class="proof-status" id="proofStatus">The contract commits to the deal terms.</p><button class="ghost wide" id="viewWorkerProof" type="button">View worker’s on-chain proof</button></article></aside></section>
-<section class="activity-panel hidden" id="activityPanel" tabindex="-1"><div class="section-title"><h2>Deal activity</h2><button class="ghost" id="closeActivity" type="button">Close</button></div><div id="activityList"></div></section></main><div class="toast" id="toast" role="status" aria-live="polite"></div>
-<dialog id="setupDialog"><form method="dialog"><span class="modal-icon">S</span><h2>Connect ScopePay to Arbitrum</h2><p>Use an existing ScopePay contract or deploy this reviewed build from your wallet. Deployment requires Arbitrum Sepolia test ETH.</p><label>Existing contract address<input id="contractAddressInput" placeholder="0x…"></label><button type="button" class="secondary wide" id="useContractButton">Use existing contract</button><div class="or"><span>or</span></div><button type="button" class="primary wide" id="deployContractButton">Deploy ScopePay contract</button><p class="fine dark">Payment token: Circle testnet USDC. Test tokens have no monetary value.</p><div class="modal-actions"><button class="ghost" value="cancel">Close</button></div></form></dialog>
-<dialog id="newDealDialog"><form method="dialog"><span class="modal-icon">+</span><h2>Create a funded deal</h2><p>Your wallet first approves testnet USDC, then deposits the exact milestone total into ScopePay.</p><label>Deal title<input id="newTitle" value="Product launch site"></label><div class="field-grid"><label>Freelancer wallet<input id="newWorker" placeholder="0x…"></label><label>Arbiter wallet<input id="newArbiter" placeholder="0x…"></label></div><fieldset><legend>Milestones in USDC</legend><label>01 · Direction<input class="amountInput" value="10" inputmode="decimal"></label><label>02 · Working delivery<input class="amountInput" value="25" inputmode="decimal"></label><label>03 · Final handoff<input class="amountInput" value="15" inputmode="decimal"></label></fieldset><div class="modal-actions"><button class="ghost" value="cancel">Cancel</button><button type="button" class="primary" id="createDealButton">Approve USDC & create</button></div></form></dialog>
-<dialog id="loadDealDialog"><form method="dialog"><span class="modal-icon">#</span><h2>Load an on-chain deal</h2><label>Deal number<input id="dealIdInput" value="0" inputmode="numeric"></label><div class="modal-actions"><button class="ghost" value="cancel">Cancel</button><button type="button" class="primary" id="confirmLoadDeal">Load deal</button></div></form></dialog>
-<dialog id="approveDialog"><form method="dialog"><span class="modal-icon">✓</span><h2>Release milestone payment?</h2><p>The current milestone amount will transfer to the freelancer after confirmation.</p><div class="modal-actions"><button class="ghost" value="cancel">Cancel</button><button type="button" class="primary" id="confirmApprove">Confirm in wallet</button></div></form></dialog>
-<dialog id="evidenceDialog"><form method="dialog"><span class="modal-icon">↑</span><h2>Submit milestone evidence</h2><p>ScopePay stores a commitment to this evidence, not the private work itself.</p><label>Evidence URL or delivery note<textarea id="evidenceInput" placeholder="https://… or a concise delivery note"></textarea></label><div class="modal-actions"><button class="ghost" value="cancel">Cancel</button><button type="button" class="primary" id="confirmEvidence">Commit evidence</button></div></form></dialog>
-<dialog id="disputeDialog"><form method="dialog"><span class="modal-icon warn">!</span><h2>Open a dispute</h2><p>This freezes the escrow until the named arbiter resolves it.</p><label>Reason<textarea id="disputeReason" required placeholder="Describe what does not match the agreed scope"></textarea></label><div class="modal-actions"><button class="ghost" value="cancel">Cancel</button><button type="button" class="danger" id="confirmDispute">Freeze escrow</button></div></form></dialog>
-<dialog id="resolveDialog"><form method="dialog"><span class="modal-icon">÷</span><h2>Resolve the dispute</h2><p>Choose how much of the current milestone goes to the freelancer. All other locked funds return to the client.</p><label>Freelancer receives in USDC<input id="workerAwardInput" value="0" inputmode="decimal"></label><div class="modal-actions"><button class="ghost" value="cancel">Cancel</button><button type="button" class="primary" id="confirmResolve">Resolve in wallet</button></div></form></dialog>
-<dialog id="shareDialog"><form method="dialog"><span class="modal-icon">↗</span><h2 id="shareTitle">Share verified proof</h2><p id="shareDescription">This link carries the readable deal terms and checks them against the commitments stored on Arbitrum.</p><label>Share link<textarea class="share-link" id="shareLinkOutput" readonly></textarea></label><div class="modal-actions"><button class="ghost" value="cancel">Close</button><button type="button" class="primary" id="confirmCopyShare">Copy link</button></div></form></dialog>
-<script src="/vendor/ethers.umd.min.js"></script><script src="/app.js"></script></body></html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ScopePay · Milestone escrow on Arbitrum</title>
+<meta name="description" content="Clients lock the budget in USDC or USDG before work starts. Each milestone pays on approval, and deadlines settle it when anyone goes quiet.">
+<meta name="theme-color" content="#0d0e0c">
+<meta property="og:title" content="ScopePay · Funded before you start. Paid when you deliver.">
+<meta property="og:description" content="Milestone escrow on Arbitrum where no one can sit on the money: the client, the freelancer, or the arbiter.">
+<link rel="icon" type="image/svg+xml" href="/mark.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Schibsted+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/app.css">
+</head>
+<body>
+<header class="topbar">
+  <a class="brand" href="/" aria-label="ScopePay home"><img src="/mark.svg" alt="" width="28" height="28"><span>ScopePay</span></a>
+  <nav class="tabs" aria-label="Sections">
+    <a href="#deal" data-nav="deal">Deal</a>
+    <a href="#deals" data-nav="deals">All deals</a>
+    <a href="#record" data-nav="record">Work record</a>
+  </nav>
+  <div class="top-right">
+    <span class="net" id="netBadge"><i></i>Arbitrum Sepolia</span>
+    <button class="wallet" id="walletButton" type="button">Connect wallet</button>
+  </div>
+</header>
+
+<main>
+  <section class="intro" aria-labelledby="introTitle">
+    <div class="intro-copy">
+      <p class="eyebrow">Milestone escrow on Arbitrum · USDC or USDG</p>
+      <h1 id="introTitle">Funded before you start.<br>Paid when you deliver.</h1>
+      <p class="lede">The client locks the whole budget before work begins. Each milestone pays out when it's approved, and if anyone goes quiet, a deadline agreed at signing settles it instead of an argument.</p>
+      <div class="intro-actions">
+        <button class="btn primary" id="newDealButton" type="button">Start a funded deal</button>
+        <a class="btn ghost" href="#deal">See a live deal</a>
+      </div>
+    </div>
+    <ol class="rules" aria-label="What happens when someone goes quiet">
+      <li><span class="rule-who">Client goes quiet</span><span class="rule-then">The review window closes and the freelancer can claim the milestone.</span></li>
+      <li><span class="rule-who">Freelancer misses a due date</span><span class="rule-then">The client takes back everything still in escrow.</span></li>
+      <li><span class="rule-who">Arbiter never decides</span><span class="rule-then">After 14 days, delivered work splits 50/50 and undelivered work is refunded.</span></li>
+    </ol>
+  </section>
+
+  <div class="notice hidden" id="notice" role="status"></div>
+
+  <section class="deal" id="deal" tabindex="-1" aria-live="polite">
+    <div class="deal-head">
+      <div>
+        <p class="eyebrow" id="dealEyebrow">Loading deal…</p>
+        <h2 id="dealTitle" class="deal-title"><span class="skeleton w60"></span></h2>
+        <p class="deal-parties" id="dealParties"><span class="skeleton w80"></span></p>
+      </div>
+      <div class="deal-links">
+        <button class="btn small ghost" id="copyDealLink" type="button">Copy link</button>
+        <button class="btn small ghost" id="copyProofLink" type="button">Share proof</button>
+        <a class="btn small ghost" id="dealExplorer" target="_blank" rel="noreferrer">Arbiscan ↗</a>
+      </div>
+    </div>
+
+    <div class="deal-grid">
+      <div class="deal-main">
+        <div class="money" aria-label="Where the money is">
+          <div class="money-cell"><span>Locked at signing</span><strong id="mFunded">—</strong></div>
+          <div class="money-cell paid"><span>Paid to freelancer</span><strong id="mPaid">—</strong></div>
+          <div class="money-cell returned"><span>Returned to client</span><strong id="mReturned">—</strong></div>
+          <div class="money-cell escrow"><span>Still in escrow</span><strong id="mEscrow">—</strong></div>
+          <div class="money-bar" aria-hidden="true"><i class="seg paid" id="barPaid"></i><i class="seg returned" id="barReturned"></i><i class="seg escrow" id="barEscrow"></i></div>
+        </div>
+
+        <div class="block-title"><h3>Milestones</h3><span id="milestoneSummary"></span></div>
+        <ol class="milestones" id="milestones"><li class="milestone"><span class="skeleton w80"></span></li></ol>
+
+        <div class="block-title"><h3>History</h3><span>Read from the contract's events</span></div>
+        <ol class="history" id="history"><li><span class="skeleton w60"></span></li></ol>
+      </div>
+
+      <aside class="deal-side">
+        <article class="move" id="moveCard">
+          <p class="eyebrow" id="moveEyebrow">Next step</p>
+          <h3 id="moveTitle"><span class="skeleton w60"></span></h3>
+          <p id="moveText"></p>
+          <div class="clock hidden" id="moveClock"><span id="clockLabel"></span><strong id="clockValue"></strong></div>
+          <div class="move-actions" id="moveActions"></div>
+          <div class="tx hidden" id="txStatus" aria-live="polite"></div>
+          <p class="fine" id="moveFine"></p>
+        </article>
+
+        <article class="terms">
+          <div class="terms-head"><h3>Terms</h3><span class="tag" id="termsTag">Committed</span></div>
+          <dl id="termsList">
+            <div><dt>Client</dt><dd id="tClient">—</dd></div>
+            <div><dt>Freelancer</dt><dd id="tWorker">—</dd></div>
+            <div><dt>Arbiter</dt><dd id="tArbiter">—</dd></div>
+            <div><dt>Paid in</dt><dd id="tToken">—</dd></div>
+            <div><dt>Review window</dt><dd id="tWindow">—</dd></div>
+            <div><dt>Your role</dt><dd id="tRole">Guest</dd></div>
+          </dl>
+          <div class="hash"><span>Terms hash</span><code id="tHash">—</code></div>
+          <p class="fine" id="termsNote"></p>
+          <button class="btn ghost wide" id="openWorkerRecord" type="button">Freelancer's work record</button>
+        </article>
+      </aside>
+    </div>
+  </section>
+
+  <section class="deals" id="deals" tabindex="-1">
+    <div class="section-head">
+      <div><p class="eyebrow">Everything on this contract</p><h2>All deals</h2></div>
+      <div class="deals-tools">
+        <label class="mine hidden" id="mineToggleWrap"><input type="checkbox" id="mineToggle"> Only mine</label>
+        <button class="btn small ghost" id="loadDealButton" type="button">Open by number</button>
+      </div>
+    </div>
+    <div class="table-wrap">
+      <table class="deal-table">
+        <thead><tr><th>#</th><th>Deal</th><th class="num">Value</th><th>Where it stands</th></tr></thead>
+        <tbody id="dealRows"><tr><td colspan="4"><span class="skeleton w80"></span></td></tr></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="record hidden" id="record" tabindex="-1" aria-labelledby="recordTitle">
+    <div class="section-head">
+      <div><p class="eyebrow">Portable work record</p><h2 id="recordTitle">What this freelancer has been paid for</h2><p class="record-address" id="recordAddress"></p></div>
+      <div class="deals-tools"><button class="btn small ghost" id="copyRecordLink" type="button">Copy record link</button></div>
+    </div>
+    <div class="record-stats">
+      <div><span>Paid on-chain</span><strong id="rPaid">—</strong></div>
+      <div><span>Milestones paid</span><strong id="rMilestones">—</strong></div>
+      <div><span>Deals</span><strong id="rDeals">—</strong></div>
+      <div><span>Disputes</span><strong id="rDisputes">—</strong></div>
+    </div>
+    <ol class="record-list" id="recordList"></ol>
+    <p class="fine">Built only from ScopePay contract events on Arbitrum. It proves who paid this wallet, for which milestones, and how each deal ended. It says nothing about identity or the quality of the work.</p>
+  </section>
+</main>
+
+<footer class="foot">
+  <div>
+    <img src="/mark.svg" alt="" width="20" height="20">
+    <span>ScopePay v2 on Arbitrum Sepolia. Test tokens only; no real money.</span>
+  </div>
+  <div class="foot-links">
+    <a id="footContract" target="_blank" rel="noreferrer">Contract ↗</a>
+    <a id="footSource" target="_blank" rel="noreferrer">Verified source ↗</a>
+    <a href="https://github.com/Dare0x/ScopePay" target="_blank" rel="noreferrer">GitHub ↗</a>
+    <button class="linkish" id="otherContract" type="button">Use another contract</button>
+  </div>
+</footer>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<dialog id="newDealDialog">
+  <form method="dialog" class="sheet" id="newDealForm">
+    <h2>Start a funded deal</h2>
+    <p>Your wallet approves the token, then locks the full total in the contract. Nobody can move it except by the rules below.</p>
+    <label>What is the work?<input id="ndTitle" maxlength="120" value="Landing page for a coffee brand" required></label>
+    <div class="two">
+      <label>Freelancer wallet<input id="ndWorker" placeholder="0x…" autocomplete="off" spellcheck="false"></label>
+      <label>Arbiter wallet<input id="ndArbiter" placeholder="0x…" autocomplete="off" spellcheck="false"></label>
+    </div>
+    <div class="two">
+      <label>Pay in<select id="ndToken"></select></label>
+      <label>Client review window<select id="ndWindow">
+        <option value="3600">1 hour (for testing)</option>
+        <option value="86400">1 day</option>
+        <option value="259200" selected>3 days</option>
+        <option value="604800">7 days</option>
+      </select></label>
+    </div>
+    <fieldset>
+      <legend>Milestones</legend>
+      <div id="ndMilestones"></div>
+      <button class="linkish" type="button" id="ndAdd">+ Add a milestone</button>
+    </fieldset>
+    <p class="sum" id="ndSum"></p>
+    <div class="sheet-actions"><button class="btn ghost" value="cancel">Cancel</button><button class="btn primary" type="button" id="ndSubmit">Approve and lock funds</button></div>
+  </form>
+</dialog>
+
+<dialog id="submitDialog">
+  <form method="dialog" class="sheet">
+    <h2>Deliver <span id="sdName">this milestone</span></h2>
+    <p>Paste a link to the work or a short delivery note. Only its fingerprint (a hash) goes on-chain; you choose who sees the text.</p>
+    <label>Delivery link or note<textarea id="sdText" maxlength="2000" placeholder="https://… or what you delivered"></textarea></label>
+    <div class="sheet-actions"><button class="btn ghost" value="cancel">Cancel</button><button class="btn primary" type="button" id="sdSubmit">Submit for review</button></div>
+  </form>
+</dialog>
+
+<dialog id="approveDialog">
+  <form method="dialog" class="sheet">
+    <h2>Release <span id="adAmount"></span>?</h2>
+    <p>This pays the freelancer for <strong id="adName"></strong> and moves the deal to the next milestone. It can't be undone.</p>
+    <div class="sheet-actions"><button class="btn ghost" value="cancel">Not yet</button><button class="btn primary" type="button" id="adSubmit">Release payment</button></div>
+  </form>
+</dialog>
+
+<dialog id="disputeDialog">
+  <form method="dialog" class="sheet">
+    <h2>Freeze this deal?</h2>
+    <p>Nothing moves until the arbiter decides. If the arbiter hasn't acted after 14 days, either side can settle: delivered work splits 50/50, undelivered work goes back to the client.</p>
+    <label>What doesn't match the agreement?<textarea id="ddText" maxlength="2000" placeholder="Be specific. Only a hash of this goes on-chain."></textarea></label>
+    <div class="sheet-actions"><button class="btn ghost" value="cancel">Cancel</button><button class="btn danger" type="button" id="ddSubmit">Freeze and call the arbiter</button></div>
+  </form>
+</dialog>
+
+<dialog id="resolveDialog">
+  <form method="dialog" class="sheet">
+    <h2>Decide milestone <span id="rdIndex"></span></h2>
+    <p>Choose how much of this milestone (<strong id="rdMax"></strong>) the freelancer earned. Everything else still in escrow goes back to the client.</p>
+    <label>Freelancer receives<input id="rdAmount" inputmode="decimal" value="0"></label>
+    <div class="quick" id="rdQuick"><button type="button" data-share="0">Nothing</button><button type="button" data-share="50">Half</button><button type="button" data-share="100">All of it</button></div>
+    <p class="sum" id="rdSplit"></p>
+    <div class="sheet-actions"><button class="btn ghost" value="cancel">Cancel</button><button class="btn primary" type="button" id="rdSubmit">Settle the dispute</button></div>
+  </form>
+</dialog>
+
+<dialog id="openDialog">
+  <form method="dialog" class="sheet">
+    <h2>Open a deal by number</h2>
+    <label>Deal number<input id="odId" inputmode="numeric" value="0"></label>
+    <div class="sheet-actions"><button class="btn ghost" value="cancel">Cancel</button><button class="btn primary" type="button" id="odSubmit">Open</button></div>
+  </form>
+</dialog>
+
+<dialog id="contractDialog">
+  <form method="dialog" class="sheet">
+    <h2>Use another ScopePay contract</h2>
+    <p>For reviewers and forks. The app checks the address is a ScopePay v2 contract before reading it. This isn't saved; reload to return to the default.</p>
+    <label>Contract address<input id="cdAddress" placeholder="0x…" autocomplete="off" spellcheck="false"></label>
+    <div class="sheet-actions"><button class="btn ghost" value="cancel">Cancel</button><button class="btn primary" type="button" id="cdSubmit">Open contract</button></div>
+  </form>
+</dialog>
+
+<dialog id="shareDialog">
+  <form method="dialog" class="sheet">
+    <h2 id="shTitle">Share</h2>
+    <p id="shText"></p>
+    <label>Link<textarea class="mono" id="shLink" readonly></textarea></label>
+    <div class="sheet-actions"><button class="btn ghost" value="cancel">Close</button><button class="btn primary" type="button" id="shCopy">Copy link</button></div>
+  </form>
+</dialog>
+
+<script src="/vendor/ethers.umd.min.js"></script>
+<script type="module" src="/app.js"></script>
+</body>
+</html>

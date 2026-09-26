@@ -5,83 +5,151 @@ import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 
-/// @title ScopePay
-/// @notice USDC milestone escrow for clients and independent workers.
-/// @dev Terms and evidence are stored off-chain; only their commitments are public.
+/// @title ScopePay v2
+/// @notice Milestone escrow in USDC or USDG for clients and independent workers.
+/// @dev Terms, evidence and dispute reasons stay off-chain; only their hashes are stored.
+///      No party can hold the money hostage: a client who never reviews, a worker who
+///      never delivers, and an arbiter who never decides each give the other side a
+///      way to settle once a clock known at signing time has run out.
 contract ScopePay is ReentrancyGuard {
     using SafeERC20 for IERC20;
 
     enum MilestoneStatus { Pending, Submitted, Released, Refunded }
+
     struct Deal {
-        address client; address worker; address arbiter; bytes32 termsCommitment;
-        uint128 totalDeposited; uint128 remaining; uint32 currentMilestone;
-        uint32 milestoneCount; bool disputed; bool closed;
+        address client;
+        address worker;
+        address arbiter;
+        address token;
+        bytes32 termsCommitment;
+        uint128 totalDeposited;
+        uint128 remaining;
+        uint32 currentMilestone;
+        uint32 milestoneCount;
+        uint32 reviewWindow; // seconds the client has to review a submission
+        uint64 activeSince;  // when the current milestone became the current one
+        uint64 disputedAt;   // zero unless a dispute is open
+        bool closed;
     }
-    struct Milestone { uint128 amount; uint64 dueAt; MilestoneStatus status; bytes32 evidenceCommitment; }
 
-    IERC20 public immutable paymentToken;
+    struct Milestone {
+        uint128 amount;
+        uint64 dueAt;
+        uint64 submittedAt;
+        MilestoneStatus status;
+        bytes32 evidenceCommitment;
+    }
+
+    uint32 public constant MIN_REVIEW_WINDOW = 1 hours;
+    uint32 public constant MAX_REVIEW_WINDOW = 30 days;
+    uint64 public constant ARBITER_WINDOW = 14 days;
+    uint256 public constant MAX_MILESTONES = 12;
+    uint256 public constant MAX_TOKENS = 4;
+
+    mapping(address => bool) public isSupportedToken;
+    address[] private tokenList;
     uint256 public nextDealId;
-    mapping(uint256 => Deal) public deals;
-    mapping(uint256 => mapping(uint256 => Milestone)) public milestones;
+    mapping(uint256 => Deal) private deals;
+    mapping(uint256 => mapping(uint256 => Milestone)) private milestones;
 
-    error InvalidParty(); error InvalidMilestones(); error InvalidToken();
-    error Unauthorized(); error InvalidState(); error WrongAmount();
+    error InvalidToken(); error UnsupportedToken(); error InvalidParty(); error InvalidMilestones();
+    error InvalidWindow(); error Unauthorized(); error InvalidState(); error WrongAmount(); error TooEarly();
 
-    event DealCreated(uint256 indexed dealId, address indexed client, address indexed worker, address arbiter, uint256 value, bytes32 termsCommitment);
+    event DealCreated(uint256 indexed dealId, address indexed client, address indexed worker, address arbiter, address token, uint256 value, uint32 reviewWindow, bytes32 termsCommitment);
     event MilestoneSubmitted(uint256 indexed dealId, uint256 indexed milestone, bytes32 evidenceCommitment);
-    event MilestoneReleased(uint256 indexed dealId, uint256 indexed milestone, uint256 amount);
+    event MilestoneReleased(uint256 indexed dealId, uint256 indexed milestone, uint256 amount, bool afterReviewWindow);
     event DisputeOpened(uint256 indexed dealId, uint256 indexed milestone, address indexed openedBy, bytes32 reasonCommitment);
-    event DisputeResolved(uint256 indexed dealId, uint256 indexed milestone, uint256 workerAmount, uint256 clientAmount);
-    event DealCancelled(uint256 indexed dealId, uint256 refundedAmount);
+    event DisputeResolved(uint256 indexed dealId, uint256 indexed milestone, uint256 workerAmount, uint256 clientAmount, bool arbiterTimedOut);
+    event DealCancelled(uint256 indexed dealId, uint256 indexed milestone, uint256 refundedAmount, bool deadlineMissed);
 
-    constructor(address token) {
-        if (token == address(0) || token.code.length == 0) revert InvalidToken();
-        paymentToken = IERC20(token);
+    constructor(address[] memory tokens) {
+        if (tokens.length == 0 || tokens.length > MAX_TOKENS) revert InvalidToken();
+        for (uint256 i; i < tokens.length; ++i) {
+            address token = tokens[i];
+            if (token == address(0) || token.code.length == 0 || isSupportedToken[token]) revert InvalidToken();
+            isSupportedToken[token] = true;
+            tokenList.push(token);
+        }
     }
 
-    function createDeal(address worker, address arbiter, uint128[] calldata amounts, uint64[] calldata dueDates, bytes32 termsCommitment) external nonReentrant returns (uint256 dealId) {
+    // ----- creating a deal -----
+
+    function createDeal(
+        address token,
+        address worker,
+        address arbiter,
+        uint128[] calldata amounts,
+        uint64[] calldata dueDates,
+        uint32 reviewWindow,
+        bytes32 termsCommitment
+    ) external nonReentrant returns (uint256 dealId) {
+        if (!isSupportedToken[token]) revert UnsupportedToken();
         if (worker == address(0) || arbiter == address(0) || worker == msg.sender || arbiter == msg.sender || arbiter == worker) revert InvalidParty();
-        if (amounts.length == 0 || amounts.length > 12 || amounts.length != dueDates.length || termsCommitment == bytes32(0)) revert InvalidMilestones();
+        if (reviewWindow < MIN_REVIEW_WINDOW || reviewWindow > MAX_REVIEW_WINDOW) revert InvalidWindow();
+        if (amounts.length == 0 || amounts.length > MAX_MILESTONES || amounts.length != dueDates.length || termsCommitment == bytes32(0)) revert InvalidMilestones();
         uint256 total; uint64 previous;
         for (uint256 i; i < amounts.length; ++i) {
             if (amounts[i] == 0 || dueDates[i] <= block.timestamp || dueDates[i] <= previous) revert InvalidMilestones();
             total += amounts[i]; previous = dueDates[i];
         }
         if (total > type(uint128).max) revert WrongAmount();
+
         dealId = nextDealId++;
-        deals[dealId] = Deal(msg.sender, worker, arbiter, termsCommitment, uint128(total), uint128(total), 0, uint32(amounts.length), false, false);
-        for (uint256 i; i < amounts.length; ++i) milestones[dealId][i] = Milestone(amounts[i], dueDates[i], MilestoneStatus.Pending, bytes32(0));
-        paymentToken.safeTransferFrom(msg.sender, address(this), total);
-        emit DealCreated(dealId, msg.sender, worker, arbiter, total, termsCommitment);
+        Deal storage deal = deals[dealId];
+        deal.client = msg.sender; deal.worker = worker; deal.arbiter = arbiter; deal.token = token;
+        deal.termsCommitment = termsCommitment;
+        deal.totalDeposited = uint128(total); deal.remaining = uint128(total);
+        deal.milestoneCount = uint32(amounts.length); deal.reviewWindow = reviewWindow;
+        deal.activeSince = uint64(block.timestamp);
+        for (uint256 i; i < amounts.length; ++i) milestones[dealId][i] = Milestone(amounts[i], dueDates[i], 0, MilestoneStatus.Pending, bytes32(0));
+
+        // Measure what actually arrived, so a fee-on-transfer token cannot leave the deal underfunded.
+        uint256 balanceBefore = IERC20(token).balanceOf(address(this));
+        IERC20(token).safeTransferFrom(msg.sender, address(this), total);
+        if (IERC20(token).balanceOf(address(this)) - balanceBefore != total) revert WrongAmount();
+        emit DealCreated(dealId, msg.sender, worker, arbiter, token, total, reviewWindow, termsCommitment);
     }
+
+    // ----- the normal path -----
 
     function submitMilestone(uint256 dealId, uint256 milestone, bytes32 evidenceCommitment) external {
         Deal storage deal = deals[dealId];
         if (msg.sender != deal.worker) revert Unauthorized();
-        if (deal.closed || deal.disputed || milestone != deal.currentMilestone || evidenceCommitment == bytes32(0)) revert InvalidState();
+        if (deal.closed || deal.disputedAt != 0 || milestone != deal.currentMilestone || evidenceCommitment == bytes32(0)) revert InvalidState();
         Milestone storage item = milestones[dealId][milestone];
         if (item.status != MilestoneStatus.Pending) revert InvalidState();
-        item.status = MilestoneStatus.Submitted; item.evidenceCommitment = evidenceCommitment;
+        item.status = MilestoneStatus.Submitted;
+        item.submittedAt = uint64(block.timestamp);
+        item.evidenceCommitment = evidenceCommitment;
         emit MilestoneSubmitted(dealId, milestone, evidenceCommitment);
     }
 
     function approveMilestone(uint256 dealId, uint256 milestone) external nonReentrant {
         Deal storage deal = deals[dealId];
         if (msg.sender != deal.client) revert Unauthorized();
-        if (deal.closed || deal.disputed || milestone != deal.currentMilestone) revert InvalidState();
-        Milestone storage item = milestones[dealId][milestone];
-        if (item.status != MilestoneStatus.Submitted) revert InvalidState();
-        item.status = MilestoneStatus.Released; deal.remaining -= item.amount; deal.currentMilestone++;
-        if (deal.currentMilestone == deal.milestoneCount) deal.closed = true;
-        paymentToken.safeTransfer(deal.worker, item.amount);
-        emit MilestoneReleased(dealId, milestone, item.amount);
+        if (deal.closed || deal.disputedAt != 0 || milestone != deal.currentMilestone) revert InvalidState();
+        if (milestones[dealId][milestone].status != MilestoneStatus.Submitted) revert InvalidState();
+        _release(dealId, deal, false);
     }
+
+    /// @notice A client who neither approves nor disputes within the review window has accepted the work.
+    function claimAfterReviewWindow(uint256 dealId) external nonReentrant {
+        Deal storage deal = deals[dealId];
+        if (msg.sender != deal.worker) revert Unauthorized();
+        if (deal.closed || deal.disputedAt != 0) revert InvalidState();
+        Milestone storage item = milestones[dealId][deal.currentMilestone];
+        if (item.status != MilestoneStatus.Submitted) revert InvalidState();
+        if (block.timestamp < uint256(item.submittedAt) + deal.reviewWindow) revert TooEarly();
+        _release(dealId, deal, true);
+    }
+
+    // ----- disputes -----
 
     function openDispute(uint256 dealId, bytes32 reasonCommitment) external {
         Deal storage deal = deals[dealId];
         if (msg.sender != deal.client && msg.sender != deal.worker) revert Unauthorized();
-        if (deal.closed || deal.disputed || reasonCommitment == bytes32(0)) revert InvalidState();
-        deal.disputed = true;
+        if (deal.closed || deal.disputedAt != 0 || reasonCommitment == bytes32(0)) revert InvalidState();
+        deal.disputedAt = uint64(block.timestamp);
         emit DisputeOpened(dealId, deal.currentMilestone, msg.sender, reasonCommitment);
     }
 
@@ -89,24 +157,93 @@ contract ScopePay is ReentrancyGuard {
     function resolveDispute(uint256 dealId, uint128 workerAmount) external nonReentrant {
         Deal storage deal = deals[dealId];
         if (msg.sender != deal.arbiter) revert Unauthorized();
-        if (deal.closed || !deal.disputed) revert InvalidState();
-        Milestone storage item = milestones[dealId][deal.currentMilestone];
-        if (workerAmount > item.amount) revert WrongAmount();
-        uint256 clientAmount = deal.remaining - workerAmount;
-        item.status = workerAmount == 0 ? MilestoneStatus.Refunded : MilestoneStatus.Released;
-        deal.remaining = 0; deal.closed = true; deal.disputed = false;
-        if (workerAmount != 0) paymentToken.safeTransfer(deal.worker, workerAmount);
-        if (clientAmount != 0) paymentToken.safeTransfer(deal.client, clientAmount);
-        emit DisputeResolved(dealId, deal.currentMilestone, workerAmount, clientAmount);
+        if (deal.closed || deal.disputedAt == 0) revert InvalidState();
+        if (workerAmount > milestones[dealId][deal.currentMilestone].amount) revert WrongAmount();
+        _settle(dealId, deal, workerAmount, false);
     }
+
+    /// @notice If the arbiter stays silent, delivered work is split evenly and undelivered work is refunded.
+    function settleAfterArbiterWindow(uint256 dealId) external nonReentrant {
+        Deal storage deal = deals[dealId];
+        if (msg.sender != deal.client && msg.sender != deal.worker) revert Unauthorized();
+        if (deal.closed || deal.disputedAt == 0) revert InvalidState();
+        if (block.timestamp < uint256(deal.disputedAt) + ARBITER_WINDOW) revert TooEarly();
+        Milestone storage item = milestones[dealId][deal.currentMilestone];
+        _settle(dealId, deal, item.status == MilestoneStatus.Submitted ? item.amount / 2 : 0, true);
+    }
+
+    // ----- ending early -----
 
     function cancelUnstarted(uint256 dealId) external nonReentrant {
         Deal storage deal = deals[dealId];
         if (msg.sender != deal.client) revert Unauthorized();
-        if (deal.closed || deal.disputed || deal.currentMilestone != 0 || milestones[dealId][0].status != MilestoneStatus.Pending) revert InvalidState();
-        uint256 refund = deal.remaining; deal.remaining = 0; deal.closed = true;
-        milestones[dealId][0].status = MilestoneStatus.Refunded;
-        paymentToken.safeTransfer(deal.client, refund);
-        emit DealCancelled(dealId, refund);
+        if (deal.closed || deal.disputedAt != 0 || deal.currentMilestone != 0 || milestones[dealId][0].status != MilestoneStatus.Pending) revert InvalidState();
+        _refund(dealId, deal, false);
+    }
+
+    /// @notice A worker who has not delivered the current milestone by its due date loses the rest of the deal.
+    /// @dev The worker always gets at least one review window after the previous release, so a client
+    ///      cannot run out the next deadline by approving late.
+    function reclaimAfterMissedDeadline(uint256 dealId) external nonReentrant {
+        Deal storage deal = deals[dealId];
+        if (msg.sender != deal.client) revert Unauthorized();
+        if (deal.closed || deal.disputedAt != 0) revert InvalidState();
+        if (milestones[dealId][deal.currentMilestone].status != MilestoneStatus.Pending) revert InvalidState();
+        if (block.timestamp <= missedDeadlineAt(dealId)) revert TooEarly();
+        _refund(dealId, deal, true);
+    }
+
+    // ----- views -----
+
+    function getDeal(uint256 dealId) external view returns (Deal memory) { return deals[dealId]; }
+
+    function getMilestones(uint256 dealId) external view returns (Milestone[] memory items) {
+        uint256 count = deals[dealId].milestoneCount;
+        items = new Milestone[](count);
+        for (uint256 i; i < count; ++i) items[i] = milestones[dealId][i];
+    }
+
+    function supportedTokens() external view returns (address[] memory) { return tokenList; }
+
+    /// @notice The moment after which the client may reclaim an undelivered current milestone.
+    function missedDeadlineAt(uint256 dealId) public view returns (uint256) {
+        Deal storage deal = deals[dealId];
+        uint256 due = milestones[dealId][deal.currentMilestone].dueAt;
+        uint256 grace = uint256(deal.activeSince) + deal.reviewWindow;
+        return due > grace ? due : grace;
+    }
+
+    // ----- internal settlement -----
+
+    function _release(uint256 dealId, Deal storage deal, bool afterReviewWindow) private {
+        uint256 index = deal.currentMilestone;
+        Milestone storage item = milestones[dealId][index];
+        uint128 amount = item.amount;
+        item.status = MilestoneStatus.Released;
+        deal.remaining -= amount;
+        deal.currentMilestone = uint32(index + 1);
+        deal.activeSince = uint64(block.timestamp);
+        if (index + 1 == deal.milestoneCount) deal.closed = true;
+        IERC20(deal.token).safeTransfer(deal.worker, amount);
+        emit MilestoneReleased(dealId, index, amount, afterReviewWindow);
+    }
+
+    function _settle(uint256 dealId, Deal storage deal, uint128 workerAmount, bool arbiterTimedOut) private {
+        uint256 index = deal.currentMilestone;
+        uint256 clientAmount = deal.remaining - workerAmount;
+        milestones[dealId][index].status = workerAmount == 0 ? MilestoneStatus.Refunded : MilestoneStatus.Released;
+        deal.remaining = 0; deal.closed = true; deal.disputedAt = 0;
+        if (workerAmount != 0) IERC20(deal.token).safeTransfer(deal.worker, workerAmount);
+        if (clientAmount != 0) IERC20(deal.token).safeTransfer(deal.client, clientAmount);
+        emit DisputeResolved(dealId, index, workerAmount, clientAmount, arbiterTimedOut);
+    }
+
+    function _refund(uint256 dealId, Deal storage deal, bool deadlineMissed) private {
+        uint256 index = deal.currentMilestone;
+        uint256 refund = deal.remaining;
+        milestones[dealId][index].status = MilestoneStatus.Refunded;
+        deal.remaining = 0; deal.closed = true;
+        IERC20(deal.token).safeTransfer(deal.client, refund);
+        emit DealCancelled(dealId, index, refund, deadlineMissed);
     }
 }
