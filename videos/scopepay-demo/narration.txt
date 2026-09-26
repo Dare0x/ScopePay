@@ -1,0 +1,27 @@
+Most online work still ends with a message that says: trust me.
+The file was delivered. The payment was sent. The proof is somewhere in a chat thread.
+ScopePay makes the important moments visible, before the money moves.
+
+Start with the exact scope.
+A client funds a committed deal in USDC on Arbitrum. The total is visible. The milestones are named. The terms are locked before the work starts.
+That small change matters. It gives both sides one shared starting point, instead of two different memories of the promise.
+
+Then the worker delivers.
+Each milestone carries evidence: a working result, a commitment, and a time-stamped record. The client can see what changed, what is owed, and what can be released.
+No vague handoff. No disappearing attachment. The result stays attached to the decision.
+
+Approve a milestone and the balance moves with the approval.
+The activity record keeps the receipt next to the payment, so a completed task becomes portable work history.
+
+And when work disagrees, ScopePay does not pretend the disagreement is not there.
+The disputed milestone freezes. The rest of the deal stays legible. A named arbiter reviews the evidence and resolves only the current milestone.
+The contract records the outcome without rewriting what happened before it.
+
+Every result stays checkable: the contract, the deal, the transaction, and the worker record.
+That is the difference between a payment notification and a settlement you can prove.
+
+ScopePay turns internet work into a clear sequence.
+Fund the scope.
+Deliver the work.
+Approve the evidence.
+Keep the receipt.
