@@ -25,7 +25,12 @@
   class Timeline {
     constructor() { this.tweens = []; this._timeScale = 1; this._time = 0; }
     fromTo(target, from, to, duration, position) {
-      this.tweens.push({ elements: elements(target), from, to, duration, position: Number(position) || 0, stagger: Number(to.stagger) || 0 });
+      // Accept the standard GSAP shorthand used by the composition: the
+      // fourth argument is the timeline position when `to.duration` exists.
+      const hasVarsDuration = to && typeof to.duration === "number";
+      const actualDuration = hasVarsDuration ? to.duration : duration;
+      const actualPosition = hasVarsDuration && position === undefined ? duration : position;
+      this.tweens.push({ elements: elements(target), from, to, duration: Number(actualDuration) || 0, position: Number(actualPosition) || 0, stagger: Number(to.stagger) || 0 });
       return this;
     }
     to(target, to, duration, position) {
@@ -37,7 +42,10 @@
           from.x = 0; from.y = 0; from.scale = 1;
         }
       });
-      this.tweens.push({ elements: els, from, to, duration, position: Number(position) || 0, stagger: Number(to.stagger) || 0 });
+      const hasVarsDuration = to && typeof to.duration === "number";
+      const actualDuration = hasVarsDuration ? to.duration : duration;
+      const actualPosition = hasVarsDuration && position === undefined ? duration : position;
+      this.tweens.push({ elements: els, from, to, duration: Number(actualDuration) || 0, position: Number(actualPosition) || 0, stagger: Number(to.stagger) || 0 });
       return this;
     }
     seek(time) {

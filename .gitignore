@@ -5,3 +5,7 @@ artifacts/
 .tooling/
 .env
 proof-terminal-*.png
+videos/reference-monadtrust/
+videos/scopepay-demo/snapshots/rebuild*/
+videos/scopepay-demo/renders/*.hf-transaction-*
+videos/scopepay-demo/audio/*.wav
