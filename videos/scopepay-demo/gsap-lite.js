@@ -23,7 +23,7 @@
   }
 
   class Timeline {
-    constructor() { this.tweens = []; }
+    constructor() { this.tweens = []; this._timeScale = 1; this._time = 0; }
     fromTo(target, from, to, duration, position) {
       this.tweens.push({ elements: elements(target), from, to, duration, position: Number(position) || 0, stagger: Number(to.stagger) || 0 });
       return this;
@@ -41,6 +41,7 @@
       return this;
     }
     seek(time) {
+      this._time = Number(time) || 0;
       this.tweens.forEach((tween) => {
         tween.elements.forEach((element, index) => {
           const start = tween.position + index * tween.stagger;
@@ -57,6 +58,29 @@
           apply(element, values);
         });
       });
+      return this;
+    }
+    totalTime(value) {
+      if (value === undefined) return this._time;
+      return this.seek(value);
+    }
+    duration() {
+      return this.tweens.reduce((max, tween) => Math.max(max, tween.position + tween.duration + tween.stagger * Math.max(0, tween.elements.length - 1)), 0);
+    }
+    totalDuration() { return this.duration(); }
+    getChildren() { return this.tweens; }
+    paused(value) { if (value === undefined) return false; return this; }
+    play() { return this; }
+    pause() { return this; }
+    restart() { return this.seek(0); }
+    progress(value) {
+      const duration = this.duration() || 1;
+      if (value === undefined) return this._time / duration;
+      return this.seek(Number(value) * duration);
+    }
+    timeScale(value) {
+      if (value === undefined) return this._timeScale;
+      this._timeScale = Number(value) || 1;
       return this;
     }
   }
