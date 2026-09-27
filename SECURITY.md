@@ -1,38 +1,45 @@
 # ScopePay security model
 
-ScopePay is a testnet prototype for milestone escrow. It is not audited and must not hold production funds.
+ScopePay is a testnet prototype for milestone escrow. It is not audited and must not hold real funds.
 
-## Protected properties
+## What the contract guarantees
 
-- A deal escrows exactly the sum of its milestones.
-- Only the assigned worker can submit evidence for the current milestone.
-- Only the client can approve and release a submitted milestone.
-- A dispute blocks normal submission and approval.
-- Only the named arbiter can settle a dispute.
-- An arbiter cannot award more than the disputed milestone.
-- Every terminal path accounts for the entire deposit: released to the worker or refunded to the client.
-- Deal state is isolated by deal ID.
+- A deal escrows exactly the sum of its milestones, in one of the tokens fixed at deployment (Circle USDC, Paxos USDG).
+  The deposit is measured by balance difference, so a fee-on-transfer token is refused.
+- Only the freelancer submits deliveries, only the client approves, only the named arbiter resolves disputes, and
+  milestones settle strictly in order.
+- Every stall has an exit agreed at signing:
+  - the freelancer can claim a submitted milestone once the client's review window has passed without approval or dispute;
+  - the client can reclaim everything still in escrow once the current milestone is past due and undelivered
+    (never earlier than one review window after the previous release);
+  - either side can settle a dispute the arbiter hasn't decided within 14 days: a delivered milestone splits 50/50,
+    an undelivered one is refunded, and later milestones return to the client.
+- Every terminal path accounts for the whole deposit: it ends with the freelancer or back with the client.
+- All payouts are protected by `ReentrancyGuard` and `SafeERC20`; deals are isolated by id.
 
 ## Trust assumptions
 
-- The payment token follows the ERC-20 transfer contract expected by OpenZeppelin `SafeERC20`.
-- The client, worker, and arbiter control distinct wallets and protect their keys.
-- The arbiter is available and evaluates off-chain evidence fairly.
-- Terms and evidence remain available off-chain; the contract stores only commitments.
-- The Arbitrum chain and selected RPC accurately expose finalized state.
+- The accepted tokens behave like standard ERC-20s (Circle USDC and Paxos USDG do). Rebasing or pausable-token behaviour
+  is outside the model.
+- Client, freelancer and arbiter are three different wallets that protect their keys; the arbiter is someone both sides accept.
+- Terms, deliveries and dispute reasons stay available off-chain; the contract stores only their hashes.
+- The Arbitrum chain and the RPC the app reads from report finalized state accurately.
 
 ## Known limitations
 
-- The deployed v1 contract has no timeout if a client or arbiter disappears. A v2 deployment must add review and dispute deadlines with safe fallback settlement.
-- Identity is wallet-based. ScopePay proves payment and participation, not a person's legal identity or work quality.
-- Evidence privacy and availability depend on the parties' chosen storage and sharing method.
-- The contract has not received an independent audit, formal verification, or production load testing.
-- Fee-on-transfer, rebasing, callback-enabled, or otherwise non-standard tokens are outside the supported model.
+- No independent audit, formal verification or production load testing.
+- The 50/50 split after an absent arbiter is a policy choice. It is visible before signing, but it isn't a judgement of the work.
+- Identity is wallet-based. The work record proves payment and participation, not who someone is or how good the work was.
+- Deadlines use block timestamps, which validators can shift by seconds; windows are hours to days long, so this doesn't matter in practice.
 
-## Test coverage
+## Tests
 
-The automated suite covers input validation, party authorization, ordered milestone progression, full release, dispute freezing, arbiter settlement bounds, cancellation rules, deal isolation, and conservation of deposited funds across terminal states.
+`npm test` runs 14 tests on a local chain: validation, roles and ordering, full release, disputes and arbiter bounds,
+cancellation, each timeout path including the late-approval grace rule, a fee-on-transfer token, a token that tries to
+re-enter the escrow during a payout, and a randomized run of 70 actions checking after every step that the escrow holds
+exactly what it owes.
 
-## Responsible disclosure
+## Reporting
 
-Do not test against other people's wallets or funds. Report a suspected issue privately to the project maintainer before publishing exploit details.
+Please don't test against other people's wallets or funds. Report a suspected issue privately to the maintainer
+([@Dare0x](https://github.com/Dare0x)) before publishing details.
