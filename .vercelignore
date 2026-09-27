@@ -1,0 +1,4 @@
+# Only the static site is deployed. Never upload .env (demo wallet keys), tools or videos.
+/*
+!dist
+!vercel.json

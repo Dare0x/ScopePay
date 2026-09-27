@@ -12,3 +12,6 @@ videos/scopepay-demo/audio/*.wav
 tools/local/
 tools/audit-out/
 tools/recordings/
+
+.vercel
+.env*
