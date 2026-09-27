@@ -24,7 +24,7 @@ page.on("console", (m) => { if (m.type() === "error") errors.push(m.text()); });
 page.on("pageerror", (e) => errors.push(e.message));
 const wallet = await installWallet(page, { rpc: config.network.rpc, chainId: config.network.chainId, accounts, clockOffset });
 
-const text = (sel) => page.$eval(sel, (e) => e.innerText.replace(/\s+/g, " ").trim()).catch(() => "");
+const text = (sel) => page.$eval(sel, (e) => e.textContent.replace(/\s+/g, " ").trim()).catch(() => "");
 const shot = async (name, full = false) => page.screenshot({ path: join(OUT, `${name}.png`), fullPage: full });
 async function open(id) {
   await page.goto(`${BASE}/?deal=${id}`, { waitUntil: "domcontentloaded" });
@@ -68,7 +68,7 @@ check((await text("#mReturned")).startsWith("35.00"), "returned total = rest of 
 console.log("Client approves a delivery");
 await open(deals.review);
 await page.click("#walletButton");
-await page.waitForFunction(() => document.querySelector("#walletButton").innerText.includes("Client"), { timeout: 10000 });
+await page.waitForFunction(() => document.querySelector("#walletButton").textContent.includes("Client"), { timeout: 10000 });
 check((await text("#moveEyebrow")).includes("Client"), "client sees their move");
 await scrollTo("#deal");
 await shot("03-client-review");
@@ -82,7 +82,7 @@ await shot("05-after-approve");
 
 console.log("Freelancer delivers milestone 2");
 await wallet.use("worker");
-await page.waitForFunction(() => document.querySelector("#walletButton").innerText.includes("Freelancer"), { timeout: 10000 });
+await page.waitForFunction(() => document.querySelector("#walletButton").textContent.includes("Freelancer"), { timeout: 10000 });
 check((await text("#moveTitle")).startsWith("Deliver"), "worker asked to deliver");
 await act("Submit delivery");
 await page.waitForSelector("#submitDialog[open]");

@@ -65,8 +65,8 @@ main { max-width: 1180px; margin: 0 auto; padding: 0 20px 64px; }
 .linkish:hover { color: var(--text); }
 
 /* ---------- intro ---------- */
-.intro { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); gap: 56px; align-items: end; padding: 64px 0 48px; border-bottom: 1px solid var(--line); }
-.intro h1 { font-size: clamp(2.3rem, 5vw, 4.1rem); line-height: 1.02; letter-spacing: -.035em; font-weight: 800; margin: 0 0 20px; }
+.intro { display: grid; grid-template-columns: minmax(0, 1.8fr) minmax(0, 1fr); gap: 56px; align-items: end; padding: 64px 0 48px; border-bottom: 1px solid var(--line); }
+.intro h1 { font-size: clamp(2.3rem, 4vw, 3.3rem); line-height: 1.02; letter-spacing: -.035em; font-weight: 800; margin: 0 0 20px; }
 .lede { font-size: 1.1rem; color: var(--muted); max-width: 590px; margin: 0; }
 .intro-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 28px; }
 .rules { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line-2); counter-reset: rule; }
@@ -195,7 +195,7 @@ dd a:hover { text-decoration: underline; }
 .deal-table .id { font-family: var(--mono); color: var(--faint); width: 56px; }
 .deal-table .name { font-weight: 600; }
 .deal-table .you { display: inline-block; margin-left: 8px; font: 600 .66rem var(--mono); text-transform: uppercase; padding: 2px 5px; border-radius: 3px; background: var(--paid); color: var(--paid-ink); vertical-align: 2px; }
-.deal-table .sub { display: block; font-size: .8rem; color: var(--faint); font-weight: 400; }
+.deal-table .sub { display: block; font-size: .8rem; color: var(--faint); font-weight: 400; white-space: nowrap; }
 .deal-table .stand { font-size: .9rem; color: var(--muted); }
 .deal-table .stand .state { margin: 0 8px 0 0; }
 
@@ -259,8 +259,13 @@ dialog::backdrop { background: rgba(5, 6, 5, .72); }
 /* ---------- smaller screens ---------- */
 @media (max-width: 980px) {
   .intro { grid-template-columns: 1fr; gap: 32px; padding-top: 44px; }
-  .deal-grid { grid-template-columns: 1fr; }
-  .deal-side { position: static; }
+  /* On narrow screens the next step comes straight after the money, before the detail. */
+  .deal-grid { display: flex; flex-direction: column; gap: 0; }
+  .deal-main, .deal-side { display: contents; }
+  .money { order: 1; }
+  .move { order: 2; margin-top: 16px; }
+  .deal-main > .block-title, .deal-main > ol { order: 3; }
+  .terms { order: 4; margin-top: 24px; }
   .deal-head { flex-direction: column; align-items: flex-start; }
   .deal-links { justify-content: flex-start; }
 }
@@ -280,6 +285,10 @@ dialog::backdrop { background: rgba(5, 6, 5, .72); }
   .deal-table tr { display: grid; grid-template-columns: 40px 1fr auto; border-bottom: 1px solid var(--line); }
   .deal-table td { border: 0; padding: 12px 10px; }
   .deal-table td.stand { grid-column: 2 / -1; padding-top: 0; }
+  .deal-table td { min-width: 0; }
+  .deal-table .sub { white-space: normal; }
+  .deal-table tr.selected { box-shadow: inset 3px 0 0 var(--paid); }
+  .deal-table tr.selected td:first-child { box-shadow: none; }
   .section-head { flex-direction: column; align-items: flex-start; }
   .record-stats { grid-template-columns: 1fr 1fr; }
   .record-stats div:nth-child(2) { border-right: 0; }

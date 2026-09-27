@@ -259,7 +259,7 @@ function describe(deal) {
   if (m.status === 'Submitted') {
     const closes = m.submittedAt + deal.reviewWindow;
     const open = nowSec() < closes;
-    return {tag: open ? 'In review' : 'Claimable', tone: 'wait', waiting: open ? 'client' : 'worker', title: 'Waiting for the client\'s review',
+    return {tag: open ? 'In review' : 'Claimable', tone: 'wait', waiting: open ? 'client' : 'worker', title: open ? 'Waiting for the client\'s review' : 'Review window closed',
       sentence: open ? `Milestone ${n} delivered. Client review closes ${relative(closes)}.` : `Milestone ${n} delivered and the review window has closed. The freelancer can claim it.`,
       clock: {label: 'Client review closes in', at: closes, over: 'Review window closed'}};
   }
