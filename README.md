@@ -53,6 +53,10 @@ Each of these is a real deal on the contract above, created and settled by the d
 | [#4 Patient dashboard for a clinic](https://scopepay-arbitrum.vercel.app/?deal=4) | Frozen by the freelancer; the 14-day arbiter clock is running |
 | [#6 Landing page for a coffee brand](https://scopepay-arbitrum.vercel.app/?deal=6) | The deal funded, delivered and paid on camera in the demo video ([fund](https://sepolia.arbiscan.io/tx/0x61f8c3eb7479b2c0b21af77f850fa714fdb68a2b40bcc3d47895761bd7bc4b79), [deliver](https://sepolia.arbiscan.io/tx/0x4f8e8cf442fcb410ab82ccda7d87ea79f7b3256292140a2e428cd30a9df0c4d1), [pay](https://sepolia.arbiscan.io/tx/0x63557ab86dcd841e3ac87f10cd8137a77dc151db3bf91b8080f25bea90534ce2)) |
 
+All of these deals are paid in test USDC. Paxos's USDG testnet faucet isn't available in Nigeria, where ScopePay is
+built, so the demo wallets couldn't get test USDG; the contract and the app accept USDG in exactly the same way (the
+token is chosen per deal at creation, and the test suite runs every path with two tokens).
+
 Anyone can read these without a wallet. To start your own deal, connect a wallet on Arbitrum Sepolia and get test USDC
 from [faucet.circle.com](https://faucet.circle.com) or test USDG from [faucet.paxos.com](https://faucet.paxos.com).
 
