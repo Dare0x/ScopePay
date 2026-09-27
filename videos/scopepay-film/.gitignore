@@ -1,0 +1,5 @@
+recordings/
+assets/rec-*.mp4
+assets/voice/*.wav
+snapshots/
+renders/*.hf-*

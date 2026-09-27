@@ -1,0 +1,48 @@
+{
+  "version": 1,
+  "preferences": {
+    "destination": {
+      "value": "youtube",
+      "confirmed_in": [
+        "scopepay-film"
+      ],
+      "updated_at": "2026-09-27T08:21:17.057Z"
+    },
+    "aspect": {
+      "value": "1920x1080",
+      "confirmed_in": [
+        "scopepay-film"
+      ],
+      "updated_at": "2026-09-27T08:21:17.234Z"
+    },
+    "language": {
+      "value": "en",
+      "confirmed_in": [
+        "scopepay-film"
+      ],
+      "updated_at": "2026-09-27T08:21:17.399Z"
+    },
+    "flow": {
+      "value": "automation",
+      "confirmed_in": [
+        "scopepay-film"
+      ],
+      "updated_at": "2026-09-27T08:21:17.573Z"
+    },
+    "storyboard": {
+      "value": "no",
+      "confirmed_in": [
+        "scopepay-film"
+      ],
+      "updated_at": "2026-09-27T08:21:17.763Z"
+    },
+    "voice": {
+      "value": "SAz9YHcvj6GT2YYXdXww",
+      "confirmed_in": [
+        "scopepay-film"
+      ],
+      "updated_at": "2026-09-27T08:21:17.941Z"
+    }
+  },
+  "sightings": {}
+}

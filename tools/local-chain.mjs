@@ -50,8 +50,10 @@ async function create({ by = client, symbol = "USDC", title, milestones, window 
   const now = await chainNow();
   const terms = { v: 2, title, token: symbol, milestones: milestones.map(([name, amount]) => ({ name, amount: String(amount) })) };
   const id = Number(await escrow.nextDealId());
-  await (await escrow.connect(by).createDeal(await tokens[symbol].getAddress(), await worker.getAddress(), await arbiter.getAddress(),
-    milestones.map(([, a]) => u(a)), dueDays.map((d) => now + Math.round(d * DAY)), window, ethers.id(JSON.stringify(terms)), TX)).wait();
+  const args = [await tokens[symbol].getAddress(), await worker.getAddress(), await arbiter.getAddress(),
+    milestones.map(([, a]) => u(a)), dueDays.map((d) => now + Math.round(d * DAY)), window, ethers.id(JSON.stringify(terms))];
+  try { await escrow.connect(by).createDeal.staticCall(...args); } catch (e) { throw new Error(`createDeal "${title}" would revert: ${e.revert?.name ?? e.shortMessage}`); }
+  await (await escrow.connect(by).createDeal(...args, TX)).wait();
   registry[id] = { terms, evidence: [] };
   return id;
 }

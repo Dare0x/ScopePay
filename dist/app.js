@@ -653,7 +653,7 @@ async function requireWallet(expectedRole, deal) {
 function txSteps(steps) {
   const el = $('#txStatus');
   el.classList.remove('hidden');
-  el.innerHTML = `<ol>${steps.map(s => `<li class="${s.state}">${s.html}</li>`).join('')}</ol>`;
+  el.innerHTML = `<span class="tx-head">Arbitrum Sepolia · live transaction</span><ol>${steps.map(s => `<li class="${s.state}">${s.html}</li>`).join('')}</ol>`;
 }
 
 async function runTx(label, sends) {
@@ -798,9 +798,9 @@ const DEFAULT_MILESTONES = [['Design direction', '10', 3], ['Working build', '25
 function milestoneRow([name, value, days]) {
   const row = document.createElement('div');
   row.className = 'ms-row';
-  row.innerHTML = `<label>Milestone<input class="ms-name" maxlength="120" value="${esc(name)}"></label>
-    <label>Amount<input class="ms-amount" inputmode="decimal" value="${esc(value)}"></label>
-    <label class="due-in">Due in (days)<input class="ms-days" inputmode="numeric" value="${esc(days)}"></label>
+  row.innerHTML = `<label><span>Milestone</span><input class="ms-name" maxlength="120" value="${esc(name)}" aria-label="Milestone name"></label>
+    <label><span>Amount</span><input class="ms-amount" inputmode="decimal" value="${esc(value)}" aria-label="Amount"></label>
+    <label class="due-in"><span>Due in (days)</span><input class="ms-days" inputmode="numeric" value="${esc(days)}" aria-label="Due in days"></label>
     <button class="remove" type="button" title="Remove milestone" aria-label="Remove milestone">×</button>`;
   row.querySelector('.remove').onclick = () => { if ($('#ndMilestones').children.length > 1) { row.remove(); updateSum(); } };
   row.querySelectorAll('input').forEach(input => { input.oninput = updateSum; });
@@ -824,7 +824,7 @@ async function openNewDeal() {
   if (!(await connectWallet())) return;
   const select = $('#ndToken');
   const previous = select.value;
-  select.innerHTML = app.config.tokens.map(t => `<option value="${t.address}">${t.symbol} · ${esc(t.name)}</option>`).join('');
+  select.innerHTML = app.config.tokens.map(t => `<option value="${t.address}">${t.symbol} · ${esc(t.name.split(' ')[0])}</option>`).join('');
   if (previous) select.value = previous;
   const rows = $('#ndMilestones');
   if (!rows.children.length) DEFAULT_MILESTONES.forEach(item => rows.append(milestoneRow(item)));

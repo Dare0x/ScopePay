@@ -1,0 +1,26 @@
+{
+  "network": "Arbitrum Sepolia",
+  "chainId": 421614,
+  "address": "0xc54a0CD2aB480D8124161772db17899c33747c89",
+  "deployBlock": 313236236,
+  "transactionHash": "0x2509de964e20622644f9495bc3edb14d8f3e2b0a388a4658b183474c9ad901ca",
+  "deployer": "0x4D8BC77d5962eAF978Ee98Ea34911AbD2a7043BA",
+  "tokens": [
+    {
+      "symbol": "USDC",
+      "name": "Circle USD Coin (test)",
+      "address": "0x75faf114eafb1BDbe2F0316DF893fd58CE46AA4d",
+      "decimals": 6,
+      "faucet": "https://faucet.circle.com"
+    },
+    {
+      "symbol": "USDG",
+      "name": "Paxos Global Dollar (test)",
+      "address": "0xFFC95faa3d63Cde504a05B567C600B78C0b41892",
+      "decimals": 6,
+      "faucet": "https://faucet.paxos.com"
+    }
+  ],
+  "compiler": "0.8.30+commit.73712a01.Emscripten.clang",
+  "deployedAt": "2026-09-27T10:30:34.483Z"
+}

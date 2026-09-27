@@ -86,7 +86,6 @@
           <p id="moveText"></p>
           <div class="clock hidden" id="moveClock"><span id="clockLabel"></span><strong id="clockValue"></strong></div>
           <div class="move-actions" id="moveActions"></div>
-          <div class="tx hidden" id="txStatus" aria-live="polite"></div>
           <p class="fine" id="moveFine"></p>
         </article>
 
@@ -154,6 +153,7 @@
 </footer>
 
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
+<aside class="tx hidden" id="txStatus" aria-live="polite" aria-label="Transaction progress"></aside>
 
 <dialog id="newDealDialog">
   <form method="dialog" class="sheet" id="newDealForm">
