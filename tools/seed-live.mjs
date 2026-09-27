@@ -93,7 +93,7 @@ async function stories() {
 
   const shipped = await create("completed", {
     symbol: "USDC", title: "Checkout flow for a Lagos food store", reviewWindow: 3 * DAY, dueIn: [3 * DAY, 7 * DAY, 10 * DAY],
-    milestones: [["Wireframes", 1], ["Working checkout", 2], ["Launch and handoff", 1.5]],
+    milestones: [["Wireframes", 1], ["Working checkout", 1.5], ["Launch and handoff", 1]],
   });
   const notes = [
     "Wireframes v2: cart, delivery address, Paystack payment and receipt screens. Figma file shared with the client.",
@@ -108,7 +108,7 @@ async function stories() {
 
   const split = await create("arbiter", {
     symbol: alt, title: "Brand video for a fintech launch", reviewWindow: 3 * DAY, dueIn: [2 * DAY, 6 * DAY, 9 * DAY],
-    milestones: [["Storyboard", 1.5], ["Final video", 4], ["Social cut-downs", 2]],
+    milestones: [["Storyboard", 1], ["Final video", 2], ["Social cut-downs", 1]],
   });
   let deal = await escrow("client").getDeal(split);
   if (!deal.closed) {
@@ -125,18 +125,18 @@ async function stories() {
 
   const claim = await create("claim", {
     symbol: "USDC", title: "Podcast edit, episodes 4 to 6", reviewWindow: HOUR, dueIn: [DAY, 3 * DAY],
-    milestones: [["Rough cut", 1], ["Final mix", 1.5]],
+    milestones: [["Rough cut", 1], ["Final mix", 1]],
   });
   if (Number((await escrow("client").getMilestones(claim))[0].status) === 0) await deliver(claim, 0, "Rough cut of episodes 4 to 6: ums and long pauses removed, 2 hours 10 minutes total.");
 
   await create("overdue", {
     symbol: alt, title: "Logo refresh for a bakery", reviewWindow: HOUR, dueIn: [15 * 60, 2 * DAY],
-    milestones: [["Three directions", 1], ["Final files", 1.5]],
+    milestones: [["Three directions", 1], ["Final files", 1]],
   });
 
   const frozen = await create("frozen", {
     symbol: "USDC", title: "Patient dashboard for a clinic", reviewWindow: 3 * DAY, dueIn: [4 * DAY, 9 * DAY],
-    milestones: [["Data model", 1], ["Dashboard", 2]],
+    milestones: [["Data model", 1], ["Dashboard", 1.5]],
   });
   deal = await escrow("client").getDeal(frozen);
   if (!deal.disputedAt && !deal.closed) {
@@ -150,7 +150,7 @@ async function stories() {
 async function finish() {
   const claim = state.deals.claim, overdue = state.deals.overdue, split = state.deals.arbiter;
   const s = await escrow("arbiter").getDeal(split);
-  if (!s.closed && s.disputedAt) await send("arbiter splits milestone 2", escrow("arbiter").resolveDispute(split, u(2.5)));
+  if (!s.closed && s.disputedAt) await send("arbiter splits milestone 2", escrow("arbiter").resolveDispute(split, u(1.25)));
   const c = await escrow("worker").getDeal(claim);
   if (!c.closed && Number(c.currentMilestone) === 0) await send("freelancer claims after the review window", escrow("worker").claimAfterReviewWindow(claim));
   const o = await escrow("client").getDeal(overdue);

@@ -2,7 +2,7 @@
 // Starts Ganache on :8545 (pretending to be Arbitrum Sepolia's chain id), deploys the
 // contract with two mock stablecoins, seeds deals in every state, and writes
 // tools/local/contract.json + registry.json for `SCOPEPAY_CONFIG_DIR=tools/local npm start`.
-// Chain time is pushed two days ahead; the harness shifts the browser clock to match.
+// Chain time is pushed two hours ahead; the harness shifts the browser clock to match.
 import { createRequire } from "node:module";
 import { ethers } from "ethers";
 import { mkdirSync, writeFileSync } from "node:fs";
@@ -66,8 +66,8 @@ const approve = async (id, i) => (await escrow.connect(client).approveMilestone(
 // Deals whose clocks must already have run out: made first, then the chain jumps ahead.
 const claimable = await create({ title: "Podcast edit, episodes 4–6", milestones: [["Rough cut", 12], ["Final mix", 18]], window: HOUR, dueDays: [1, 3] });
 await deliver(claimable, 0, "https://drive.example.com/podcast/rough-cut-v2");
-const overdue = await create({ symbol: "USDG", title: "Logo refresh", milestones: [["Three directions", 20], ["Final files", 30]], window: HOUR, dueDays: [0.5, 1.5] });
-await travel(2 * DAY);
+const overdue = await create({ symbol: "USDG", title: "Logo refresh", milestones: [["Three directions", 20], ["Final files", 30]], window: HOUR, dueDays: [0.02, 1.5] });
+await travel(2 * HOUR);
 
 const done = await create({ title: "Checkout flow for a Lagos food store", milestones: [["Wireframes", 10], ["Working checkout", 25], ["Launch and handoff", 15]], dueDays: [2, 5, 8] });
 for (const [i, text] of ["https://figma.example.com/checkout-wireframes", "https://staging.example.com/checkout", "Deployed to production; handoff notes in the shared folder"].entries()) { await deliver(done, i, text); await approve(done, i); }

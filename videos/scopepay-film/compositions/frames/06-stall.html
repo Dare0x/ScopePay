@@ -1,0 +1,97 @@
+<template>
+  <style>
+@font-face { font-family: "IBM Plex Mono"; font-weight: 400; font-style: normal; src: url("assets/fonts/IBMPlexMono-400.woff2") format("woff2"); }
+@font-face { font-family: "IBM Plex Mono"; font-weight: 500; font-style: normal; src: url("assets/fonts/IBMPlexMono-500.woff2") format("woff2"); }
+@font-face { font-family: "IBM Plex Mono"; font-weight: 600; font-style: normal; src: url("assets/fonts/IBMPlexMono-600.woff2") format("woff2"); }
+@font-face { font-family: "Schibsted Grotesk"; font-weight: 400; font-style: normal; src: url("assets/fonts/SchibstedGrotesk-400.woff2") format("woff2"); }
+@font-face { font-family: "Schibsted Grotesk"; font-weight: 500; font-style: normal; src: url("assets/fonts/SchibstedGrotesk-500.woff2") format("woff2"); }
+@font-face { font-family: "Schibsted Grotesk"; font-weight: 600; font-style: normal; src: url("assets/fonts/SchibstedGrotesk-600.woff2") format("woff2"); }
+@font-face { font-family: "Schibsted Grotesk"; font-weight: 700; font-style: normal; src: url("assets/fonts/SchibstedGrotesk-700.woff2") format("woff2"); }
+@font-face { font-family: "Schibsted Grotesk"; font-weight: 800; font-style: normal; src: url("assets/fonts/SchibstedGrotesk-800.woff2") format("woff2"); }
+#root { position: absolute; inset: 0; overflow: hidden; color: #ECEBE3; font-family: "Schibsted Grotesk", sans-serif; font-weight: 400; }
+#bg-06-stall { position: absolute; inset: 0; background: #0D0E0C; }
+#root #cam { position: absolute; inset: 0; transform-origin: 30% 45%; }
+#root .t { position: absolute; left: 160px; }
+#root .kicker { font-family: "IBM Plex Mono", monospace; font-weight: 500; font-size: 24px; letter-spacing: 0.1em; text-transform: uppercase; color: #A3A298; }
+#root .kl { position: absolute; }
+#root .h1 { font-weight: 800; font-size: 100px; line-height: 1.04; letter-spacing: -0.032em; max-width: 1620px; }
+#root .h2 { font-weight: 700; font-size: 68px; line-height: 1.1; letter-spacing: -0.02em; max-width: 1600px; }
+#root .giant { font-weight: 800; line-height: 1; letter-spacing: -0.04em; }
+#root .lead { font-size: 44px; line-height: 1.25; color: #A3A298; max-width: 1400px; }
+#root .m { display: inline-block; overflow: hidden; vertical-align: top; padding: 0.06em 0.05em 0.16em; margin: -0.06em -0.05em -0.16em; }
+#root .w { display: inline-block; }
+#root .g { color: #C5F04A; } #root .r { color: #FF6B57; } #root .mu { color: #A3A298; }
+#root .kl.hasv .w { color: #8E8D84; } #root .kl.hasv .w.v { color: #FFFFFF; }
+#root .mono { font-family: "IBM Plex Mono", monospace; }
+#root .tag { font-family: "IBM Plex Mono", monospace; font-weight: 600; font-size: 26px; letter-spacing: 0.06em; text-transform: uppercase;
+  padding: 10px 16px 11px; border: 2px solid #6F6E66; border-radius: 6px; color: #ECEBE3; white-space: nowrap; }
+#root .tag.ok { color: #C5F04A; border-color: rgba(197,240,74,0.45); }
+#root .tag.bad { color: #FF6B57; border-color: rgba(255,107,87,0.5); }
+#root .caps { position: absolute; left: 0; right: 0; display: grid; justify-items: center; z-index: 20; pointer-events: none; }
+#root .cap { grid-area: 1 / 1; font-weight: 600; font-size: 38px; line-height: 1.2; letter-spacing: -0.01em; white-space: nowrap;
+  color: #ECEBE3; background: rgba(13,14,12,0.92); border: 1px solid #2A2B26; padding: 9px 22px 12px; border-radius: 8px; opacity: 0; }
+#root .cw { display: inline-block; }
+#root #win { position: absolute; left: 240px; top: 30px; width: 1440px; height: 846px; border: 1px solid #3A3B35;
+  border-radius: 12px; overflow: hidden; background: #0D0E0C; box-shadow: 0 40px 120px rgba(0,0,0,0.6); }
+#root #win .bar { position: absolute; left: 0; right: 0; top: 0; height: 36px; border-bottom: 1px solid #2A2B26;
+  background: #151613; display: flex; align-items: center; justify-content: center; font-family: "IBM Plex Mono", monospace; }
+#root #win .url { font-size: 16px; color: #A3A298; letter-spacing: 0.02em; padding: 3px 14px; border-radius: 6px; background: #1B1C18; }
+#root #win .who { position: absolute; left: 16px; top: 0; height: 36px; width: 420px; }
+#root #win .role { position: absolute; left: 0; top: 9px; font-size: 14px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: #ECEBE3; opacity: 0; white-space: nowrap; }
+#root #win .role b { color: #A3A298; font-weight: 500; }
+#root #win .net { position: absolute; right: 16px; top: 10px; font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; color: #A3A298; }
+#root #win .scr { position: absolute; left: 0; top: 36px; width: 1440px; height: 810px; overflow: hidden; background: #0D0E0C; }
+#root #vcam { position: absolute; left: 0; top: 0; width: 1440px; height: 810px; transform-origin: 0 0; }
+#root .vidc { position: absolute; left: 0; top: 0; width: 1440px; height: 810px; display: block; }
+
+  </style>
+  <div id="root" data-composition-id="06-stall" data-width="1920" data-height="1080">
+    <div id="bg-06-stall" class="clip" data-start="0" data-duration="12.76" data-track-index="0"></div>
+    <div id="kin"><div id="k1" class="kl h1 hasv" style="left:160px;top:420px;max-width:1500px"><span class="m"><span class="w ">Here's</span></span> <span class="m"><span class="w ">the</span></span> <span class="m"><span class="w ">part</span></span> <span class="m"><span class="w ">escrow</span></span> <span class="m"><span class="w ">usually</span></span> <span class="m"><span class="w v">gets</span></span> <span class="m"><span class="w v">wrong.</span></span></div></div>
+    <div id="win"><div class="bar"><span class="who"><span class="role" id="role-worker">Signed in as <b>freelancer</b></span><span class="role" id="role-client">Signed in as <b>client</b></span></span><span class="url">scopepay-arbitrum.vercel.app</span><span class="net">Arbitrum Sepolia</span></div><div class="scr"><div id="vcam"><video id="rec-06a" class="clip vidc" src="assets/rec-06a.mp4" data-start="2.6" data-duration="5.45" data-track-index="2" muted playsinline></video><video id="rec-06b" class="clip vidc" src="assets/rec-06b.mp4" data-start="8.05" data-duration="4.71" data-track-index="2" muted playsinline></video></div></div></div>
+    <div class="caps" style="top:906px"><div class="cap" id="cap0"><span class="cw ">If</span> <span class="cw ">the</span> <span class="cw ">client</span> <span class="cw ">goes</span> <span class="cw ">quiet,</span></div><div class="cap" id="cap1"><span class="cw ">the</span> <span class="cw ">review</span> <span class="cw ">window</span> <span class="cw ">closes,</span></div><div class="cap" id="cap2"><span class="cw ">and</span> <span class="cw ">the</span> <span class="cw ">freelancer</span> <span class="cw ">claims</span> <span class="cw ">the</span> <span class="cw ">payment.</span></div><div class="cap" id="cap3"><span class="cw ">If</span> <span class="cw ">the</span> <span class="cw ">freelancer</span> <span class="cw ">misses</span> <span class="cw ">a</span> <span class="cw ">due</span> <span class="cw ">date,</span></div><div class="cap" id="cap4"><span class="cw ">the</span> <span class="cw ">client</span> <span class="cw ">takes</span> <span class="cw ">back</span> <span class="cw ">what's</span> <span class="cw ">left.</span></div></div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <script>
+    (function () {
+      const $ = (s) => document.querySelector('[data-composition-id="06-stall"] ' + s);
+      const $$ = (s) => Array.from(document.querySelectorAll('[data-composition-id="06-stall"] ' + s));
+      const tl = gsap.timeline({ paused: true, defaults: { ease: "power3.out" } });
+      tl.set($("#win"), { opacity: 0 }, 0);
+      { const ts = [0,0.31,0.478,0.75,1.22,1.758,2.017];
+        $$("#k1 .w").forEach((w, i) => { const t = ts[Math.min(i, ts.length - 1)];
+          tl.fromTo(w, { opacity: 0 }, { opacity: 1, duration: 0.01, ease: "none" }, t);
+          tl.fromTo(w, { yPercent: 118 }, { yPercent: 0, duration: 0.62, ease: "power4.out" }, t); }); }
+      tl.to($("#kin"), { opacity: 0, y: -40, duration: 0.35, ease: "power2.in" }, 2.3);
+      tl.fromTo($("#win"), { opacity: 0, y: 90, scale: 0.95 }, { opacity: 1, y: 0, scale: 1, duration: 0.6, ease: "power3.out" }, 2.5);
+      tl.set($$("#win .role"), { opacity: 0 }, 2.6); tl.set($("#role-worker"), { opacity: 1 }, 2.6);
+      tl.set($("#vcam"), {"x":-504,"y":-187.312,"scale":1.35}, 2.6);
+      tl.to($("#vcam"), { ...{"x":0,"y":-283.5,"scale":1.35}, duration: 0.9, ease: "power3.inOut" }, 5.6);
+      tl.set($$("#win .role"), { opacity: 0 }, 8.05); tl.set($("#role-client"), { opacity: 1 }, 8.05);
+      tl.set($("#vcam"), {"x":-504,"y":-187.312,"scale":1.35}, 8.05);
+      tl.to($("#vcam"), { ...{"x":-86.4,"y":-10.8,"scale":1.12}, duration: 0.8, ease: "power3.inOut" }, 11.15);
+      { const cp = $("#cap0"), ws = $$("#cap0 .cw"), ts = [2.853,3.16,3.337,3.712,3.933];
+        tl.fromTo(cp, { opacity: 0, y: 12 }, { opacity: 1, y: 0, duration: 0.22, ease: "power3.out" }, 2.753);
+        ws.forEach((w, j) => tl.fromTo(w, { opacity: 0.32 }, { opacity: 1, duration: 0.12, ease: "none" }, ts[j]));
+        tl.to(cp, { opacity: 0, duration: 0.14, ease: "power1.in" }, 4.48); }
+      { const cp = $("#cap1"), ws = $$("#cap1 .cw"), ts = [4.58,4.697,5.097,5.509];
+        tl.fromTo(cp, { opacity: 0, y: 12 }, { opacity: 1, y: 0, duration: 0.22, ease: "power3.out" }, 4.48);
+        ws.forEach((w, j) => tl.fromTo(w, { opacity: 0.32 }, { opacity: 1, duration: 0.12, ease: "none" }, ts[j]));
+        tl.to(cp, { opacity: 0, duration: 0.14, ease: "power1.in" }, 6.02); }
+      { const cp = $("#cap2"), ws = $$("#cap2 .cw"), ts = [6.12,6.26,6.378,7.006,7.3,7.41];
+        tl.fromTo(cp, { opacity: 0, y: 12 }, { opacity: 1, y: 0, duration: 0.22, ease: "power3.out" }, 6.02);
+        ws.forEach((w, j) => tl.fromTo(w, { opacity: 0.32 }, { opacity: 1, duration: 0.12, ease: "none" }, ts[j]));
+        tl.to(cp, { opacity: 0, duration: 0.14, ease: "power1.in" }, 8.087); }
+      { const cp = $("#cap3"), ws = $$("#cap3 .cw"), ts = [8.187,8.58,8.691,9.246,9.56,9.66,9.904];
+        tl.fromTo(cp, { opacity: 0, y: 12 }, { opacity: 1, y: 0, duration: 0.22, ease: "power3.out" }, 8.087);
+        ws.forEach((w, j) => tl.fromTo(w, { opacity: 0.32 }, { opacity: 1, duration: 0.12, ease: "none" }, ts[j]));
+        tl.to(cp, { opacity: 0, duration: 0.14, ease: "power1.in" }, 10.24); }
+      { const cp = $("#cap4"), ws = $$("#cap4 .cw"), ts = [10.34,10.457,10.853,11.168,11.392,11.68];
+        tl.fromTo(cp, { opacity: 0, y: 12 }, { opacity: 1, y: 0, duration: 0.22, ease: "power3.out" }, 10.24);
+        ws.forEach((w, j) => tl.fromTo(w, { opacity: 0.32 }, { opacity: 1, duration: 0.12, ease: "none" }, ts[j]));
+        tl.to(cp, { opacity: 0, duration: 0.14, ease: "power1.in" }, 12.86); }
+      tl.to({}, { duration: 12.76 }, 0);
+      window.__timelines["06-stall"] = tl;
+    })();
+  </script>
+</template>

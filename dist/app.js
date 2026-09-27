@@ -164,8 +164,16 @@ async function useContract(address) {
   $('#footSource').href = `https://repo.sourcify.dev/${app.config.network.chainId}/${address}`;
 }
 
+// One read at a time: a caller that arrives mid-read waits for it, then reads again,
+// so the refresh after a transaction never returns stale state.
 async function loadAll() {
-  if (!app.contract || app.loading) return;
+  if (!app.contract) return;
+  if (app.reading) { try { await app.reading; } catch { /* reported by that read */ } }
+  app.reading = readChain();
+  try { return await app.reading; } finally { app.reading = null; }
+}
+
+async function readChain() {
   app.loading = true;
   try {
     const [count, logs] = await Promise.all([
@@ -656,6 +664,18 @@ function txSteps(steps) {
   el.innerHTML = `<span class="tx-head">Arbitrum Sepolia · live transaction</span><ol>${steps.map(s => `<li class="${s.state}">${s.html}</li>`).join('')}</ol>`;
 }
 
+/** Waits for a receipt, falling back to the public RPC if the wallet's connection drops. */
+async function confirmed(tx) {
+  try { return await tx.wait(); } catch (error) {
+    if (error?.code === 'CALL_EXCEPTION') throw error;
+    for (let attempt = 0; attempt < 6; attempt += 1) {
+      try { const receipt = await app.read.waitForTransaction(tx.hash, 1, 60000); if (receipt) { if (!receipt.status) throw error; return receipt; } } catch (again) { if (again === error) throw error; }
+      await new Promise(r => setTimeout(r, 1500));
+    }
+    throw error;
+  }
+}
+
 async function runTx(label, sends) {
   if (app.busy) return false;
   app.busy = true;
@@ -668,13 +688,16 @@ async function runTx(label, sends) {
       steps.push(step); show();
       const tx = await send.run();
       step.html = `${esc(send.label)}: confirming on Arbitrum <a href="${explorer(`tx/${tx.hash}`)}" target="_blank" rel="noreferrer">${short(tx.hash)} ↗</a>`; show();
-      const receipt = await tx.wait();
+      const receipt = await confirmed(tx);
       step.state = 'ok';
       step.html = `${esc(send.label)} <a href="${explorer(`tx/${tx.hash}`)}" target="_blank" rel="noreferrer">${short(tx.hash)} ↗</a>`; show();
       send.receipt = receipt;
       if (i === sends.length - 1) steps.push({state: 'now', html: 'Reading the new state from the contract…'}), show();
     }
-    await loadAll();
+    // The transaction is final at this point; a flaky RPC must not turn it into an error.
+    for (let attempt = 0; attempt < 5; attempt += 1) {
+      try { await loadAll(); break; } catch { await new Promise(r => setTimeout(r, 1200 * (attempt + 1))); }
+    }
     steps.at(-1).state = 'ok';
     steps.at(-1).html = `${esc(label)}: done`;
     show();

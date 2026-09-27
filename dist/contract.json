@@ -28,6 +28,7 @@
     "deployBlock": 313236236,
     "transactionHash": "0x2509de964e20622644f9495bc3edb14d8f3e2b0a388a4658b183474c9ad901ca"
   },
+  "featuredDealId": "6",
   "archive": {
     "version": 1,
     "address": "0xcD7C1C0529A19C36941e1Bd6679ae4d4580151af",

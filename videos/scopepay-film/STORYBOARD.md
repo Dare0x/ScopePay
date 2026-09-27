@@ -35,7 +35,7 @@ portable record and the proof that the contract holds up.
 
 - scene: Two ledger rows tell the story from the freelancer's side, then flip to the client's side
 - voiceover: "A freelancer in Lagos finishes the job. Then the client goes quiet… and the money never comes. Flip it around, and it's the client who paid up front, watching the freelancer disappear."
-- duration: 14.2s
+- duration: 14.19s
 - transition_in: cut
 - status: animated
 - src: compositions/frames/01-hook.html
@@ -44,7 +44,7 @@ portable record and the proof that the contract holds up.
 
 - scene: Logo and wordmark, then the promise
 - voiceover: "ScopePay fixes both sides. It's milestone escrow on Arbitrum, where nobody gets to sit on the money."
-- duration: 6.9s
+- duration: 6.89s
 - transition_in: crossfade
 - status: animated
 - src: compositions/frames/02-promise.html
@@ -53,7 +53,7 @@ portable record and the proof that the contract holds up.
 
 - scene: Recording: the client fills the new-deal form and locks the funds on Arbitrum
 - voiceover: "The client describes the work, names the freelancer and an arbiter, and splits the budget into milestones, in USDC or Paxos USDG. Then the whole amount is locked in the contract, before any work starts."
-- duration: 14.2s
+- duration: 14.18s
 - transition_in: zoom-through
 - status: animated
 - src: compositions/frames/03-fund.html
@@ -62,7 +62,7 @@ portable record and the proof that the contract holds up.
 
 - scene: Recording: the wallet switches to the freelancer, who submits the delivery; its hash matches on-chain
 - voiceover: "The freelancer delivers. Only a fingerprint of the delivery goes on-chain, so the work stays private… but provable."
-- duration: 7.9s
+- duration: 7.91s
 - transition_in: cut
 - status: animated
 - src: compositions/frames/04-deliver.html
@@ -71,7 +71,7 @@ portable record and the proof that the contract holds up.
 
 - scene: Recording: back as the client, approve and release; the paid bar fills
 - voiceover: "The client approves, and the milestone pays out in seconds."
-- duration: 5.4s
+- duration: 5.82s
 - transition_in: cut
 - status: animated
 - src: compositions/frames/05-paid.html
@@ -80,7 +80,7 @@ portable record and the proof that the contract holds up.
 
 - scene: Kinetic line, then two real deals: the freelancer claims after the client went quiet; the client reclaims after a missed due date
 - voiceover: "Here's the part escrow usually gets wrong. If the client goes quiet, the review window closes, and the freelancer claims the payment. If the freelancer misses a due date, the client takes back what's left."
-- duration: 12.8s
+- duration: 12.76s
 - transition_in: push-slide LEFT
 - status: animated
 - src: compositions/frames/06-stall.html
@@ -89,7 +89,7 @@ portable record and the proof that the contract holds up.
 
 - scene: Recording: the arbiter splits a disputed milestone; then a frozen deal with the 14-day clock running
 - voiceover: "If they disagree, the deal freezes and the arbiter splits it. And if the arbiter never decides, the contract settles it after fourteen days. Nothing stays stuck."
-- duration: 10.2s
+- duration: 10.22s
 - transition_in: crossfade
 - status: animated
 - src: compositions/frames/07-disputes.html
@@ -98,7 +98,7 @@ portable record and the proof that the contract holds up.
 
 - scene: Recording: the freelancer's work record, then every deal on the contract
 - voiceover: "Every payment becomes part of the freelancer's work record, rebuilt straight from the contract. The next client can check it without trusting anyone."
-- duration: 9.1s
+- duration: 9.08s
 - transition_in: zoom-through
 - status: animated
 - src: compositions/frames/08-record.html
@@ -107,7 +107,7 @@ portable record and the proof that the contract holds up.
 
 - scene: Verified source on the left, the attack tests ticking green on the right
 - voiceover: "The contract source is public and verified, and the tests attack it with tokens built to cheat."
-- duration: 5.9s
+- duration: 5.88s
 - transition_in: push-slide LEFT
 - status: animated
 - src: compositions/frames/09-proof.html
@@ -116,7 +116,7 @@ portable record and the proof that the contract holds up.
 
 - scene: Logo lockup, the line, the live URL and GitHub
 - voiceover: "ScopePay. Funded before you start. Paid when you deliver."
-- duration: 7.1s
+- duration: 7.08s
 - transition_in: blur-crossfade
 - status: animated
 - src: compositions/frames/10-outro.html

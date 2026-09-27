@@ -185,8 +185,8 @@ const clips = {
       const amounts = ["1.5", "2", "1.5"];
       for (let i = 0; i < 3; i++) await a.replace(`#ndMilestones .ms-row:nth-child(${i + 1}) .ms-amount`, amounts[i], 90);
       await a.sleep(300);
-      a.mark("lock");
       await a.clickSel("#ndSubmit", 700);
+      a.mark("lock");
       await a.waitTx();
       a.mark("funded");
       await a.sleep(900);
@@ -202,8 +202,8 @@ const clips = {
       await a.clickSel("#sdText", 400);
       await a.type("Design direction v2: homepage, menu and order flow.", 16);
       await a.sleep(250);
-      a.mark("submit");
       await a.clickSel("#sdSubmit", 600);
+      a.mark("submit");
       await a.waitTx();
       a.mark("delivered");
       await a.sleep(1800);
@@ -214,8 +214,8 @@ const clips = {
       await a.actionButton("Approve and pay");
       await a.page.waitForSelector("#approveDialog[open]");
       await a.sleep(500);
-      a.mark("release");
       await a.clickSel("#adSubmit", 600);
+      a.mark("release");
       await a.waitTx();
       a.mark("paid");
       await a.moveTo(520, 250, 800);
@@ -228,9 +228,9 @@ const clips = {
     async prepare(a) { await a.as("worker"); await a.goto(`/?deal=${demo.claim}`); await a.scrollToSel("#deal", 80, 10); },
     async act(a) {
       a.mark("start");
-      await a.sleep(1500);
-      a.mark("click");
+      await a.sleep(2000);
       await a.actionButton("Claim");
+      a.mark("click");
       await a.waitTx();
       a.mark("claimed");
       await a.sleep(1200);
@@ -244,9 +244,9 @@ const clips = {
     async prepare(a) { await a.as("client"); await a.goto(`/?deal=${demo.overdue}`); await a.scrollToSel("#deal", 80, 10); },
     async act(a) {
       a.mark("start");
-      await a.sleep(1500);
-      a.mark("click");
+      await a.sleep(1800);
       await a.actionButton("Reclaim");
+      a.mark("click");
       await a.waitTx();
       a.mark("reclaimed");
       await a.sleep(3000);
@@ -262,10 +262,10 @@ const clips = {
       await a.actionButton("Settle the dispute");
       await a.page.waitForSelector("#resolveDialog[open]");
       await a.sleep(700);
-      await a.replace("#rdAmount", "2.5", 120);
+      await a.replace("#rdAmount", "1.25", 110);
       await a.sleep(600);
-      a.mark("settle");
       await a.clickSel("#rdSubmit", 700);
+      a.mark("settle");
       await a.waitTx();
       a.mark("settled");
       await a.sleep(3200);

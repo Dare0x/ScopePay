@@ -9,6 +9,9 @@ export async function installWallet(page, { rpc, chainId, accounts, keys = null,
   const provider = new ethers.JsonRpcProvider(rpc, chainId, { staticNetwork: true });
   const signers = keys ? Object.fromEntries(Object.entries(keys).map(([role, key]) => [role, new ethers.Wallet(key, provider)])) : null;
   const state = { role: "client", connected: false, sent: [] };
+  // This machine's link to the public RPC drops now and then (TLS "bad record mac"); retry those, never reverts.
+  const flaky = (e) => /SSL|TLS|ECONN|socket|network|timeout|fetch failed|bad record/i.test(String(e?.message ?? e)) && !/revert/i.test(String(e?.message));
+  const retry = async (fn) => { for (let i = 0; ; i++) { try { return await fn(); } catch (e) { if (i >= 4 || !flaky(e)) throw e; await new Promise((r) => setTimeout(r, 700 * (i + 1))); } } };
   const address = () => accounts[state.role];
 
   await page.exposeFunction("__walletRequest", async (method, paramsJson) => {
@@ -25,7 +28,7 @@ export async function installWallet(page, { rpc, chainId, accounts, keys = null,
           const tx = params[0];
           if (beforeSign) await beforeSign({ role: state.role, tx });
           if (signers) {
-            const sent = await signers[state.role].sendTransaction({ to: tx.to, data: tx.data, value: tx.value ?? 0, gasLimit: tx.gas ?? undefined });
+            const sent = await retry(() => signers[state.role].sendTransaction({ to: tx.to, data: tx.data, value: tx.value ?? 0, gasLimit: tx.gas ?? undefined }));
             result = sent.hash;
           } else {
             result = await provider.send("eth_sendTransaction", [{ ...tx, from: address() }]);
@@ -33,7 +36,7 @@ export async function installWallet(page, { rpc, chainId, accounts, keys = null,
           state.sent.push({ role: state.role, hash: result, to: tx.to });
           break;
         }
-        default: result = await provider.send(method, params);
+        default: result = await retry(() => provider.send(method, params));
       }
       return JSON.stringify({ result });
     } catch (error) {

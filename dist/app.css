@@ -9,10 +9,10 @@
   --faint: #6f6e66;
   --paid: #c5f04a;
   --paid-ink: #16200a;
-  --wait: #f2b84b;
+  --wait: #ecebe3;      /* clocks and waiting states stay neutral: two colours only */
   --frozen: #ff6b57;
-  --returned: #8fa6bf;
-  --arb: #28a0f0;
+  --returned: #a3a298;  /* money back to the client is grey, not a new hue */
+  --arb: #a3a298;
   --radius: 10px;
   --sans: "Schibsted Grotesk", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
   --mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Consolas, monospace;
@@ -58,7 +58,7 @@ main { max-width: 1180px; margin: 0 auto; padding: 0 20px 64px; }
 .btn.ghost { background: transparent; border-color: var(--line-2); color: var(--text); }
 .btn.ghost:hover { border-color: var(--faint); background: var(--panel-2); }
 .btn.danger { background: var(--frozen); color: #1d0703; }
-.btn.warn { background: var(--wait); color: #221503; }
+.btn.warn { background: var(--text); color: var(--bg); }
 .btn.wide { width: 100%; }
 .btn:disabled { opacity: .45; cursor: not-allowed; }
 .linkish { background: none; border: 0; padding: 0; color: var(--muted); font-weight: 600; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
@@ -75,7 +75,7 @@ main { max-width: 1180px; margin: 0 auto; padding: 0 20px 64px; }
 .rule-who { font-weight: 700; }
 .rule-then { color: var(--muted); font-size: .92rem; }
 
-.notice { margin: 24px 0 0; padding: 14px 16px; border: 1px solid var(--line-2); border-left: 3px solid var(--wait); border-radius: 8px; background: var(--panel); color: var(--text); }
+.notice { margin: 24px 0 0; padding: 14px 16px; border: 1px solid var(--line-2); border-left: 3px solid var(--muted); border-radius: 8px; background: var(--panel); color: var(--text); }
 .notice.bad { border-left-color: var(--frozen); }
 .notice a, .notice button { color: var(--text); }
 
@@ -100,7 +100,7 @@ main { max-width: 1180px; margin: 0 auto; padding: 0 20px 64px; }
 .money-bar { grid-column: 1 / -1; display: flex; height: 6px; background: var(--panel-2); }
 .money-bar .seg { display: block; height: 100%; width: 0; transition: width .5s ease; }
 .money-bar .seg.paid { background: var(--paid); }
-.money-bar .seg.returned { background: var(--returned); }
+.money-bar .seg.returned { background: #5d5c55; }
 .money-bar .seg.escrow { background: repeating-linear-gradient(90deg, var(--line-2) 0 6px, transparent 6px 9px); }
 
 .block-title { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin: 30px 0 12px; }
@@ -121,9 +121,9 @@ main { max-width: 1180px; margin: 0 auto; padding: 0 20px 64px; }
 .milestone.released .n { color: var(--paid); }
 .state { display: inline-block; margin-top: 6px; font: 600 .7rem/1 var(--mono); text-transform: uppercase; letter-spacing: .05em; padding: 5px 7px; border-radius: 4px; border: 1px solid var(--line-2); color: var(--muted); white-space: nowrap; }
 .state.paid { color: var(--paid); border-color: rgba(197, 240, 74, .35); }
-.state.wait { color: var(--wait); border-color: rgba(242, 184, 75, .4); }
+.state.wait { color: var(--text); border-color: var(--faint); }
 .state.frozen { color: var(--frozen); border-color: rgba(255, 107, 87, .45); }
-.state.returned { color: var(--returned); border-color: rgba(143, 166, 191, .4); }
+.state.returned { color: var(--muted); border-color: var(--line-2); }
 .evidence { margin: 10px 0 0; padding: 9px 11px; border-radius: 6px; background: var(--bg); border: 1px solid var(--line); font-size: .84rem; color: var(--muted); overflow-wrap: anywhere; }
 .evidence b { color: var(--paid); font-weight: 600; margin-right: 6px; }
 .evidence a { color: var(--text); }
@@ -141,7 +141,7 @@ main { max-width: 1180px; margin: 0 auto; padding: 0 20px 64px; }
 
 .deal-side { display: grid; gap: 16px; position: sticky; top: 84px; }
 .move, .terms { border: 1px solid var(--line); border-radius: var(--radius); background: var(--panel); padding: 20px; }
-.move { border-top: 3px solid var(--wait); }
+.move { border-top: 3px solid var(--line-2); }
 .move.done { border-top-color: var(--paid); }
 .move.frozen { border-top-color: var(--frozen); }
 .move h3 { margin: 0 0 8px; font-size: 1.25rem; line-height: 1.2; letter-spacing: -.01em; }

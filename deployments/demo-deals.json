@@ -1,0 +1,10 @@
+{
+  "contract": "0xc54a0CD2aB480D8124161772db17899c33747c89",
+  "deals": {
+    "completed": 0,
+    "arbiter": 1,
+    "claim": 2,
+    "overdue": 3,
+    "frozen": 4
+  }
+}

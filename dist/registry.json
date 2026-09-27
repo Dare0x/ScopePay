@@ -1,0 +1,188 @@
+{
+  "0xc54a0cd2ab480d8124161772db17899c33747c89": {
+    "0": {
+      "terms": {
+        "v": 2,
+        "title": "Checkout flow for a Lagos food store",
+        "token": "USDC",
+        "milestones": [
+          {
+            "name": "Wireframes",
+            "amount": "1"
+          },
+          {
+            "name": "Working checkout",
+            "amount": "1.5"
+          },
+          {
+            "name": "Launch and handoff",
+            "amount": "1"
+          }
+        ]
+      },
+      "evidence": [
+        {
+          "milestone": 0,
+          "text": "Wireframes v2: cart, delivery address, Paystack payment and receipt screens. Figma file shared with the client."
+        },
+        {
+          "milestone": 1,
+          "text": "Working checkout on staging: card and bank-transfer payments tested with 12 sample orders."
+        },
+        {
+          "milestone": 2,
+          "text": "Live on the store's domain. Handoff doc covers the admin panel, refunds and the order export."
+        }
+      ]
+    },
+    "1": {
+      "terms": {
+        "v": 2,
+        "title": "Brand video for a fintech launch",
+        "token": "USDC",
+        "milestones": [
+          {
+            "name": "Storyboard",
+            "amount": "1"
+          },
+          {
+            "name": "Final video",
+            "amount": "2"
+          },
+          {
+            "name": "Social cut-downs",
+            "amount": "1"
+          }
+        ]
+      },
+      "evidence": [
+        {
+          "milestone": 0,
+          "text": "Storyboard v3: 14 frames, voice-over script and music reference, approved on the call."
+        },
+        {
+          "milestone": 1,
+          "text": "Final video v1: 1:20 master in 16:9, exported at 4K."
+        }
+      ]
+    },
+    "2": {
+      "terms": {
+        "v": 2,
+        "title": "Podcast edit, episodes 4 to 6",
+        "token": "USDC",
+        "milestones": [
+          {
+            "name": "Rough cut",
+            "amount": "1"
+          },
+          {
+            "name": "Final mix",
+            "amount": "1"
+          }
+        ]
+      },
+      "evidence": [
+        {
+          "milestone": 0,
+          "text": "Rough cut of episodes 4 to 6: ums and long pauses removed, 2 hours 10 minutes total."
+        }
+      ]
+    },
+    "3": {
+      "terms": {
+        "v": 2,
+        "title": "Logo refresh for a bakery",
+        "token": "USDC",
+        "milestones": [
+          {
+            "name": "Three directions",
+            "amount": "1"
+          },
+          {
+            "name": "Final files",
+            "amount": "1"
+          }
+        ]
+      },
+      "evidence": []
+    },
+    "4": {
+      "terms": {
+        "v": 2,
+        "title": "Patient dashboard for a clinic",
+        "token": "USDC",
+        "milestones": [
+          {
+            "name": "Data model",
+            "amount": "1"
+          },
+          {
+            "name": "Dashboard",
+            "amount": "1.5"
+          }
+        ]
+      },
+      "evidence": [
+        {
+          "milestone": 0,
+          "text": "Data model and import script for appointments, visits and invoices. Pull request #3."
+        }
+      ]
+    },
+    "5": {
+      "terms": {
+        "v": 2,
+        "title": "Landing page for a coffee brand",
+        "token": "USDC",
+        "milestones": [
+          {
+            "name": "Design direction",
+            "amount": "1.5"
+          },
+          {
+            "name": "Working build",
+            "amount": "2.0"
+          },
+          {
+            "name": "Launch and handoff",
+            "amount": "1.5"
+          }
+        ]
+      },
+      "evidence": [
+        {
+          "milestone": 0,
+          "text": "Design direction v2: homepage, menu and order flow."
+        }
+      ]
+    },
+    "6": {
+      "terms": {
+        "v": 2,
+        "title": "Landing page for a coffee brand",
+        "token": "USDC",
+        "milestones": [
+          {
+            "name": "Design direction",
+            "amount": "1.5"
+          },
+          {
+            "name": "Working build",
+            "amount": "2.0"
+          },
+          {
+            "name": "Launch and handoff",
+            "amount": "1.5"
+          }
+        ]
+      },
+      "evidence": [
+        {
+          "milestone": 0,
+          "text": "Design direction v2: homepage, menu and order flow."
+        }
+      ]
+    }
+  }
+}
