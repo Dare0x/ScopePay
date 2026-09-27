@@ -90,7 +90,7 @@ async function session(name, run) {
     },
     async box(sel) { return page.$eval(sel, (e) => { const r = e.getBoundingClientRect(); return [r.left + r.width / 2, r.top + r.height / 2, r.top, r.bottom]; }); },
     async moveToSel(sel, ms = 900, dx = 0, dy = 0) {
-      await page.$eval(sel, (e) => e.scrollIntoView({ block: "nearest" }));
+      await page.$eval(sel, (e) => e.scrollIntoView({ block: "nearest", behavior: "instant" }));
       const [x, y] = await a.box(sel);
       await a.moveTo(x + dx, y + dy, ms);
     },
@@ -287,11 +287,13 @@ const clips = {
     async prepare(a) { await a.goto(`/?deal=${demo.completed}`); await a.scrollToSel("#deal", 80, 10); },
     async act(a) {
       a.mark("start");
-      await a.sleep(600);
-      await a.clickSel("#openWorkerRecord", 900);
-      await a.page.waitForFunction(() => !document.querySelector("#recordList").textContent.includes("Reading"), { timeout: 30000 });
+      await a.sleep(500);
+      await a.scrollToSel(".terms", 120, 1000);
+      await a.clickSel("#openWorkerRecord", 800);
+      await a.page.waitForFunction(() => !document.querySelector("#record").classList.contains("hidden") && document.querySelectorAll("#recordList li .amt").length > 0, { timeout: 30000 });
+      await a.sleep(900);
       a.mark("record");
-      await a.sleep(2600);
+      await a.sleep(2400);
       await a.scrollToSel("#recordList", 160, 1400);
       await a.sleep(2200);
       a.mark("deals");
