@@ -4,6 +4,7 @@
 //   node seed-live.mjs gas       give the freelancer and arbiter wallets a little ETH for gas
 //   node seed-live.mjs stories   create the demo deals (each one shows a different outcome)
 //   node seed-live.mjs finish    fallback: the arbiter split, claim and reclaim if the recording didn't do them
+//   node seed-live.mjs usdg      a deal paid in Paxos USDG, delivered and approved
 //   node seed-live.mjs status    print balances and what has been done
 import { ethers } from "ethers";
 import fs from "node:fs";
@@ -146,6 +147,24 @@ async function stories() {
   console.log("Stories created:", state.deals);
 }
 
+// A deal paid in Paxos USDG, delivered and approved end to end.
+async function usdg() {
+  const balance = await token("USDG").balanceOf(address.client);
+  if (balance < u(2)) throw new Error(`The client holds only ${ethers.formatUnits(balance, 6)} USDG; need at least 2.`);
+  const a = balance >= u(5) ? [2, 3] : [1, 1];
+  const id = await create("usdg", {
+    symbol: "USDG", title: "Menu photography for a Lagos restaurant", reviewWindow: 3 * DAY, dueIn: [3 * DAY, 7 * DAY],
+    milestones: [["Shot list and test shots", a[0]], ["Final edited photos", a[1]]],
+  });
+  const notes = ["Shot list for 24 dishes and six test shots in the restaurant's light, approved by the owner.", "24 edited photos delivered in web and print sizes, with the raw files."];
+  for (let i = 0; i < 2; i++) {
+    const m = (await escrow("client").getMilestones(id))[i];
+    if (Number(m.status) === 0) await deliver(id, i, notes[i]);
+    if (Number((await escrow("client").getMilestones(id))[i].status) === 1) await approve(id, i);
+  }
+  console.log(`USDG deal #${id} completed.`);
+}
+
 // Fallback for anything the recording didn't do on camera.
 async function finish() {
   const claim = state.deals.claim, overdue = state.deals.overdue, split = state.deals.arbiter;
@@ -158,4 +177,4 @@ async function finish() {
 }
 
 const command = process.argv[2] || "status";
-await ({ status, gas, stories, finish }[command] ?? (() => { throw new Error(`Unknown command ${command}`); }))();
+await ({ status, gas, stories, finish, usdg }[command] ?? (() => { throw new Error(`Unknown command ${command}`); }))();
