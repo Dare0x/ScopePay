@@ -9,6 +9,12 @@ missed deadline, 14-day arbiter window). Live: https://scopepay-arbitrum.vercel.
 Contract (Arbitrum Sepolia): `0xc54a0CD2aB480D8124161772db17899c33747c89` (see `deployments/arbitrum-sepolia.json`).
 Sibling project: **MonadTrust** (ERC-8004 review audit on Monad), same author, separate repo (`dare0x/monadtrust`).
 
+## How to talk to Dare (important)
+Dare is new to tech and wants plain language. Explain like to a smart beginner: no jargon without a one-line meaning,
+short steps, one concrete example, say what to click or type. Don't dump options; give one recommendation. Avoid
+talking about "cloud vs local" setups unless it blocks the work. Dare uses the Claude desktop app.
+Ignore anything about Dare's "second semester" materials: that lives in a separate chat.
+
 ## About the builder
 Dare Ayodeji: AI/data engineer and pharmacy student, based in Nigeria (the USDG faucet isn't available there, which is
 why demo deals use USDC; keep that README note accurate). Prefers plain explanations. Strategy: ship several small,
